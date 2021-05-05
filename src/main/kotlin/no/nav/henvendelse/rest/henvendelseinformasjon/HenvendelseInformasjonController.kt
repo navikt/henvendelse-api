@@ -2,9 +2,16 @@ package no.nav.henvendelse.rest.henvendelseinformasjon
 
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiParam
+import no.nav.henvendelse.naudit.Audit
+import no.nav.henvendelse.naudit.Audit.Companion.describe
+import no.nav.henvendelse.naudit.Audit.Companion.withAudit
+import no.nav.henvendelse.naudit.AuditIdentifier
+import no.nav.henvendelse.naudit.AuditResources.Henvendelse.Companion.Henvendelse
 import no.nav.henvendelse.rest.common.HenvendelseType
 import no.nav.tjeneste.domene.brukerdialog.henvendelse.v2.henvendelse.HenvendelsePortType
-import no.nav.tjeneste.domene.brukerdialog.henvendelse.v2.meldinger.*
+import no.nav.tjeneste.domene.brukerdialog.henvendelse.v2.meldinger.WSHentBehandlingskjedeRequest
+import no.nav.tjeneste.domene.brukerdialog.henvendelse.v2.meldinger.WSHentHenvendelseListeRequest
+import no.nav.tjeneste.domene.brukerdialog.henvendelse.v2.meldinger.WSHentHenvendelseRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -23,10 +30,17 @@ class HenvendelseInformasjonController : HenvendelseApi {
         @ApiParam(example = "1001ABBA")
         @RequestParam("behandlingsId") behandlingsId: String
     ): HentHenvendelseResponse {
-        return porttype.hentHenvendelse(
-            WSHentHenvendelseRequest()
-                .withBehandlingsId(behandlingsId)
-        ).fromWS()
+        val identifiers = arrayOf(
+            AuditIdentifier.BEHANDLINGSID to behandlingsId
+        )
+        return withAudit(describe(Audit.Action.READ, Henvendelse, *identifiers)) {
+            porttype
+                .hentHenvendelse(
+                    WSHentHenvendelseRequest()
+                        .withBehandlingsId(behandlingsId)
+                )
+                .fromWS()
+        }
     }
 
     @GetMapping("/hentbehandlingskjede")
@@ -35,10 +49,17 @@ class HenvendelseInformasjonController : HenvendelseApi {
         @ApiParam(example = "1001ABBA")
         @RequestParam("behandlingskjedeId") behandlingskjedeId: String
     ): HentBehandlingskjedeResponse {
-        return porttype.hentBehandlingskjede(
-            WSHentBehandlingskjedeRequest()
-                .withBehandlingskjedeId(behandlingskjedeId)
-        ).fromWS()
+        val identifiers = arrayOf(
+            AuditIdentifier.BEHANDLINGSKJEDEID to behandlingskjedeId
+        )
+        return withAudit(describe(Audit.Action.READ, Henvendelse, *identifiers)) {
+            porttype
+                .hentBehandlingskjede(
+                    WSHentBehandlingskjedeRequest()
+                        .withBehandlingskjedeId(behandlingskjedeId)
+                )
+                .fromWS()
+        }
     }
 
     @GetMapping("/henthenvendelseliste")
@@ -49,10 +70,16 @@ class HenvendelseInformasjonController : HenvendelseApi {
         @ApiParam(example = "[SVAR_OPPMOTE, REFERAT_OPPMOTE]")
         @RequestParam("typer") typer: List<HenvendelseType>
     ): HentHenvendelseListeResponse {
-        return porttype.hentHenvendelseListe(
-            WSHentHenvendelseListeRequest()
-                .withFodselsnummer(fodselsnummer)
-                .withTyper(typer.map { it.name })
-        ).fromWS()
+        val identifiers = arrayOf(
+            AuditIdentifier.FNR to fodselsnummer,
+            AuditIdentifier.HENVENDELSETYPER to typer.joinToString(", "),
+        )
+        return withAudit(describe(Audit.Action.READ, Henvendelse, *identifiers)) {
+            porttype.hentHenvendelseListe(
+                WSHentHenvendelseListeRequest()
+                    .withFodselsnummer(fodselsnummer)
+                    .withTyper(typer.map { it.name })
+            ).fromWS()
+        }
     }
 }

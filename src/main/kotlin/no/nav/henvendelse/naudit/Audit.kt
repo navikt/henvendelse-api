@@ -1,9 +1,9 @@
 package no.nav.henvendelse.naudit
 
+import no.nav.common.auth.context.AuthContextHolderThreadLocal
 import no.nav.henvendelse.naudit.AuditIdentifier.DENY_REASON
 import no.nav.henvendelse.naudit.AuditIdentifier.FAIL_REASON
 import org.slf4j.LoggerFactory
-import java.util.*
 
 private val tjenestekallLogg = LoggerFactory.getLogger("SecureLog")
 class Audit {
@@ -13,54 +13,52 @@ class Audit {
     }
 
     interface AuditDescriptor<T> {
-        fun log(resource: T?)
-        fun denied(reason: String)
-        fun failed(exception: Throwable)
+        fun log(subject: String?, resource: T?)
+        fun denied(subject: String?, reason: String)
+        fun failed(subject: String?, exception: Throwable)
 
         fun Throwable.getFailureReason(): String = this.message ?: this.toString()
     }
 
     internal class ParameterizedDescriptor<T>(
-        private val subject: Optional<String>,
         private val action: Action,
         private val resourceType: AuditResource,
         private val extractIdentifiers: (T?) -> List<Pair<AuditIdentifier, String?>>
     ) : AuditDescriptor<T> {
-        override fun log(resource: T?) {
+        override fun log(subject: String?, resource: T?) {
             val identifiers = extractIdentifiers(resource).toTypedArray()
             logInternal(subject, action, resourceType, identifiers)
         }
 
-        override fun denied(reason: String) {
+        override fun denied(subject: String?, reason: String) {
             logInternal(subject, action, resourceType, arrayOf(DENY_REASON to reason))
         }
 
-        override fun failed(exception: Throwable) {
+        override fun failed(subject: String?, exception: Throwable) {
             logInternal(subject, action, resourceType, arrayOf(FAIL_REASON to exception.getFailureReason()))
         }
     }
 
     internal class NoopDescriptor<T> : AuditDescriptor<T> {
-        override fun log(resource: T?) {}
-        override fun denied(reason: String) {}
-        override fun failed(exception: Throwable) {}
+        override fun log(subject: String?, resource: T?) {}
+        override fun denied(subject: String?, reason: String) {}
+        override fun failed(subject: String?, exception: Throwable) {}
     }
 
     internal class Descriptor(
-        private val subject: Optional<String>,
         private val action: Action,
         private val resourceType: AuditResource,
         private val identifiers: Array<out Pair<AuditIdentifier, String?>>
     ) : AuditDescriptor<Any> {
-        override fun log(resource: Any?) {
+        override fun log(subject: String?, resource: Any?) {
             logInternal(subject, action, resourceType, identifiers)
         }
 
-        override fun denied(reason: String) {
+        override fun denied(subject: String?, reason: String) {
             logInternal(subject, action, resourceType, arrayOf(DENY_REASON to reason))
         }
 
-        override fun failed(exception: Throwable) {
+        override fun failed(subject: String?, exception: Throwable) {
             logInternal(subject, action, resourceType, arrayOf(FAIL_REASON to exception.getFailureReason()))
         }
     }
@@ -72,27 +70,29 @@ class Audit {
         fun <T> skipAuditLog(): AuditDescriptor<T> = NoopDescriptor()
 
         @JvmStatic
-        fun describe(subject: Optional<String>, action: Action, resourceType: AuditResource, vararg identifiers: Pair<AuditIdentifier, String?>): AuditDescriptor<Any> {
-            return Descriptor(subject, action, resourceType, identifiers)
+        fun describe(action: Action, resourceType: AuditResource, vararg identifiers: Pair<AuditIdentifier, String?>): AuditDescriptor<Any> {
+            return Descriptor(action, resourceType, identifiers)
         }
 
         @JvmStatic
-        fun <T> describe(subject: Optional<String>, action: Action, resourceType: AuditResource, extractIdentifiers: (T?) -> List<Pair<AuditIdentifier, String?>>): AuditDescriptor<T> {
-            return ParameterizedDescriptor(subject, action, resourceType, extractIdentifiers)
+        fun <T> describe(action: Action, resourceType: AuditResource, extractIdentifiers: (T?) -> List<Pair<AuditIdentifier, String?>>): AuditDescriptor<T> {
+            return ParameterizedDescriptor(action, resourceType, extractIdentifiers)
         }
 
         @JvmStatic
         fun <S> withAudit(descriptor: AuditDescriptor<in S>, supplier: () -> S): S {
+            val authcontext = AuthContextHolderThreadLocal.instance()
+            val subject = authcontext.navIdent.map { it.get() }.orElse(null)
             return runCatching(supplier)
-                .onSuccess(descriptor::log)
-                .onFailure(descriptor::failed)
+                .onSuccess { descriptor.log(subject, it) }
+                .onFailure { descriptor.failed(subject, it) }
                 .getOrThrow()
         }
 
-        private fun logInternal(subject: Optional<String>, action: Action, resourceType: AuditResource, identifiers: Array<out Pair<AuditIdentifier, String?>>) {
+        private fun logInternal(subject: String?, action: Action, resourceType: AuditResource, identifiers: Array<out Pair<AuditIdentifier, String?>>) {
             val logline = listOfNotNull(
                 "action='$action'",
-                subject.map { "subject='$it'" }.orElse(null),
+                subject?.let { "subject='$it'" },
                 "resource='${resourceType.resource}'",
                 *identifiers
                     .map { "${it.first}='${it.second ?: "-"}'" }

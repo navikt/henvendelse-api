@@ -53,7 +53,7 @@ class KontorsperreRequest(
 )
 class OppdaterKasseringRequest(
     @ApiModelProperty(example = "[\"1001ABBA\", \"1020ACDC\"]")
-    val behandlingIdListe: List<String>
+    val behandlingsIdListe: List<String>
 )
 class OppdaterTemagruppeRequest(
     @ApiModelProperty(example = "1001ABBA")
