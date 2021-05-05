@@ -6,7 +6,6 @@ class AuditResources {
             val Henvendelse = Audit.AuditResource("henvendelse")
             val Samtalereferat = Audit.AuditResource("henvendelse.samtalereferat")
 
-
             val FerdigstillUtenSvar = Audit.AuditResource("henvendelse.ferdigstillutensvar")
             val OppdaterKontorsperre = Audit.AuditResource("henvendelse.oppdaterkontorsperre")
             val OppdaterTilKassering = Audit.AuditResource("henvendelse.oppdatertilkassering")

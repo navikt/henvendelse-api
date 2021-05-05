@@ -51,8 +51,6 @@ spec:
       value: "https://security-token-service.nais.preprod.local/rest/v1/sts/.well-known/openid-configuration"
     - name: SECURITYTOKENSERVICE_URL
       value: "https://sts-{{ namespace }}.preprod.local/SecurityTokenServiceProvider/"
-    - name: UNLEASH_API_URL
-      value: "https://unleash.nais.io/api/"
     - name: MODIA_CLIENT_ID
       value: "modialogin-{{ namespace }}"
     - name: ISSO_DISCOVERY_URL
@@ -67,3 +65,5 @@ spec:
       value: "dummy"
     - name: SYSTEMUSER_PASSWORD
       value: "dummy"
+    - name: CXF_SECURE_LOG
+      value: "enabled"
