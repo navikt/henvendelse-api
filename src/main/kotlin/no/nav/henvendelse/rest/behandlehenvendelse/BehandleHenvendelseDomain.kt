@@ -1,5 +1,7 @@
 package no.nav.henvendelse.rest.behandlehenvendelse
 
+import io.swagger.annotations.ApiModel
+import io.swagger.annotations.ApiModelProperty
 import no.nav.henvendelse.rest.common.JournalfortInformasjon
 import no.nav.henvendelse.rest.common.RestOperationNotSupportedException
 import no.nav.henvendelse.rest.common.Temagruppe
@@ -25,29 +27,57 @@ interface BehandleHenvendelseApi {
     fun settOversendtDokmot(behandlingsId: String, oversendtDato: LocalDateTime) {
         throw RestOperationNotSupportedException("Operasjonen kan bare brukes av dialogstyring")
     }
+    fun ping() {
+        throw RestOperationNotSupportedException("Ping operasjonen er erstattet av isAlive mot henvendelse-api")
+    }
 
     fun ferdigstillUtenSvar(request: FerdigstillRequest)
     fun oppdaterTilKassering(request: OppdaterKasseringRequest)
     fun oppdaterKontorsperre(request: KontorsperreRequest)
     fun oppdaterTemagruppe(request: OppdaterTemagruppeRequest)
     fun knyttBehandlingskjedeTilSak(request: KnyttTilSakRequest)
-    fun ping()
 }
 
-class FerdigstillRequest(val behandlingskjedeId: String, val enhetId: String)
-class KontorsperreRequest(val enhet: String, val behandlingsIdListe: List<String>)
-class OppdaterKasseringRequest(val behandlingIdListe: List<String>)
-class OppdaterTemagruppeRequest(val behandlingsId: String, val temagruppe: Temagruppe)
-class KnyttTilSakRequest(
+@ApiModel()
+class FerdigstillRequest(
+    @ApiModelProperty(example = "1001ABBA")
     val behandlingskjedeId: String,
+    @ApiModelProperty(example = "4110")
+    val enhetId: String
+)
+class KontorsperreRequest(
+    @ApiModelProperty(example = "[\"1001ABBA\", \"1020ACDC\"]")
+    val behandlingsIdListe: List<String>,
+    @ApiModelProperty(example = "4110")
+    val enhet: String
+)
+class OppdaterKasseringRequest(
+    @ApiModelProperty(example = "[\"1001ABBA\", \"1020ACDC\"]")
+    val behandlingIdListe: List<String>
+)
+class OppdaterTemagruppeRequest(
+    @ApiModelProperty(example = "1001ABBA")
+    val behandlingsId: String,
+    @ApiModelProperty(example = "ARBD")
+    val temagruppe: Temagruppe
+)
+class KnyttTilSakRequest(
+    @ApiModelProperty(example = "1001ABBA")
+    val behandlingskjedeId: String,
+    @ApiModelProperty(example = "123456")
     val saksId: String,
+    @ApiModelProperty(example = "DAG")
     val temakode: String,
+    @ApiModelProperty(example = "4110")
     val journalforendeEnhet: String
 )
 
 class OppgaveOpprettetInformasjon(
+    @ApiModelProperty(example = "1001ABBA")
     val behandlingsId: String,
+    @ApiModelProperty(example = "123456789")
     val oppgaveIdGsak: String,
+    @ApiModelProperty(example = "123456789")
     val henvendelseIdGsak: String
 )
 fun OppgaveOpprettetInformasjon.toWS() = XMLOppgaveOpprettetInformasjon()

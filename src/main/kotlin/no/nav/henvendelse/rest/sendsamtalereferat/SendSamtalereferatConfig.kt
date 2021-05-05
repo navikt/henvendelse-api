@@ -1,4 +1,4 @@
-package no.nav.henvendelse.rest.senduthenvendelse
+package no.nav.henvendelse.rest.sendsamtalereferat
 
 import no.nav.common.cxf.StsConfig
 import no.nav.common.utils.EnvironmentUtils
@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class SendUtHenvendelseConfig {
+class SendSamtalereferatConfig {
     @Autowired
     lateinit var stsConfig: StsConfig
 

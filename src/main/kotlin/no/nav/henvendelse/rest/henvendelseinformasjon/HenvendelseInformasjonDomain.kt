@@ -2,6 +2,7 @@ package no.nav.henvendelse.rest.henvendelseinformasjon
 
 import no.nav.henvendelse.rest.common.Henvendelse
 import no.nav.henvendelse.rest.common.HenvendelseType
+import no.nav.henvendelse.rest.common.RestOperationNotSupportedException
 import no.nav.henvendelse.rest.common.fromWS
 import no.nav.melding.domene.brukerdialog.behandlingsinformasjon.v1.XMLHenvendelse
 import no.nav.tjeneste.domene.brukerdialog.henvendelse.v2.meldinger.*
@@ -13,7 +14,9 @@ interface HenvendelseApi {
         fodselsnummer: String,
         typer: List<HenvendelseType>
     ): HentHenvendelseListeResponse
-    fun ping()
+    fun ping() {
+        throw RestOperationNotSupportedException("Ping operasjonen er erstattet av isAlive mot henvendelse-api")
+    }
 }
 
 class HentHenvendelseResponse(

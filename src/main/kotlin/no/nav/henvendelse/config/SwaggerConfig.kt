@@ -1,5 +1,10 @@
 package no.nav.henvendelse.config
 
+import com.fasterxml.classmate.TypeResolver
+import no.nav.henvendelse.rest.common.DokumentVarsel
+import no.nav.henvendelse.rest.common.MeldingFraBruker
+import no.nav.henvendelse.rest.common.MeldingTilBruker
+import no.nav.henvendelse.rest.common.OppgaveVarsel
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import springfox.documentation.service.ApiKey
@@ -13,7 +18,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 @EnableSwagger2
 class SwaggerConfig {
     @Bean
-    fun docket(): Docket = Docket(DocumentationType.SWAGGER_2)
+    fun docket(typeResolver: TypeResolver): Docket = Docket(DocumentationType.SWAGGER_2)
         .select()
         .apis { handler ->
             handler
@@ -31,5 +36,11 @@ class SwaggerConfig {
 
             securitySchemes(listOf(scheme))
             securityContexts(listOf(context))
+            additionalModels(
+                typeResolver.resolve(MeldingFraBruker::class.java),
+                typeResolver.resolve(MeldingTilBruker::class.java),
+                typeResolver.resolve(OppgaveVarsel::class.java),
+                typeResolver.resolve(DokumentVarsel::class.java)
+            )
         }
 }
