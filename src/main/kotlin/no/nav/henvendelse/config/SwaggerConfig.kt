@@ -19,6 +19,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 class SwaggerConfig {
     @Bean
     fun docket(typeResolver: TypeResolver): Docket = Docket(DocumentationType.SWAGGER_2)
+        .useDefaultResponseMessages(false)
         .select()
         .apis { handler ->
             handler

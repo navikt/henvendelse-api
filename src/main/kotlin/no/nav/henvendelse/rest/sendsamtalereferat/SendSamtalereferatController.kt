@@ -1,6 +1,6 @@
 package no.nav.henvendelse.rest.sendsamtalereferat
 
-import io.swagger.annotations.ApiImplicitParam
+import io.swagger.annotations.*
 import no.nav.common.auth.context.AuthContextHolder
 import no.nav.henvendelse.naudit.Audit.Action.CREATE
 import no.nav.henvendelse.naudit.Audit.Companion.describe
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/v1/sendsamtalereferat")
+@Api(description = "APIer for oppretting av samtalereferat")
 class SendSamtalereferatController {
     @Autowired
     lateinit var authcontext: AuthContextHolder
@@ -28,7 +29,18 @@ class SendSamtalereferatController {
     lateinit var porttype: SendUtHenvendelsePortType
 
     @PostMapping("/send")
+    @ApiOperation(
+        value = "Oppretter samtalereferat til bruker",
+        notes = """
+            Minimalistisk API for opprettelse av samtalereferat.
+        """
+    )
     @ApiImplicitParam(name = "X-Correlation-Id", paramType = "header", required = true)
+    @ApiResponses(value = [
+        ApiResponse(code = 200, message = "Returner behandlingsIden for det opprettede samtalereferatet"),
+        ApiResponse(code = 401, message = "Ugyldig token"),
+        ApiResponse(code = 406, message = "Validering av dataene i requesten feilet, se feilmelding i responsen."),
+    ])
     fun sendSamtaleReferat(@RequestBody request: SendSamtalereferatRequest): String {
         return withAudit(describe(CREATE, Samtalereferat, FNR to request.fnr, ENHET to request.enhet)) {
             val navIdent = requireOptional(authcontext.navIdent)

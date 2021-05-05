@@ -1,7 +1,6 @@
 package no.nav.henvendelse.rest.henvendelseinformasjon
 
-import io.swagger.annotations.ApiImplicitParam
-import io.swagger.annotations.ApiParam
+import io.swagger.annotations.*
 import no.nav.henvendelse.naudit.Audit
 import no.nav.henvendelse.naudit.Audit.Companion.describe
 import no.nav.henvendelse.naudit.Audit.Companion.withAudit
@@ -20,12 +19,26 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/v1/henvendelseinformasjon")
+@Api(description = "APIer for uthenting av henvendelser")
 class HenvendelseInformasjonController : HenvendelseApi {
     @Autowired
     lateinit var porttype: HenvendelsePortType
 
     @GetMapping("/henthenvendelse")
+    @ApiOperation(
+        value = "Hent henvendelse",
+        notes = """
+            Henter ut enkelt henvendelse gitt behandlingsId.
+            Dette vil typisk kun være nødvendig om man akkurat har opprettet en henvendelse, 
+            og vil hente denne spesifike henvendelsen ut igjen.
+        """
+    )
     @ApiImplicitParam(name = "X-Correlation-Id", paramType = "header", required = true)
+    @ApiResponses(value = [
+        ApiResponse(code = 200, message = "Henvendelse"),
+        ApiResponse(code = 401, message = "Ugyldig token"),
+        ApiResponse(code = 406, message = "Validering av dataene i requesten feilet, se feilmelding i responsen."),
+    ])
     override fun hentHenvendelse(
         @ApiParam(example = "1001ABBA")
         @RequestParam("behandlingsId") behandlingsId: String
@@ -44,7 +57,18 @@ class HenvendelseInformasjonController : HenvendelseApi {
     }
 
     @GetMapping("/hentbehandlingskjede")
+    @ApiOperation(
+        value = "Hent behandlingskjede",
+        notes = """
+            Henter ut enkelt alle henvendelser med samme behandlingskjedeId (dialog).
+        """
+    )
     @ApiImplicitParam(name = "X-Correlation-Id", paramType = "header", required = true)
+    @ApiResponses(value = [
+        ApiResponse(code = 200, message = "Henvendelsene"),
+        ApiResponse(code = 401, message = "Ugyldig token"),
+        ApiResponse(code = 406, message = "Validering av dataene i requesten feilet, se feilmelding i responsen."),
+    ])
     override fun hentBehandlingskjede(
         @ApiParam(example = "1001ABBA")
         @RequestParam("behandlingskjedeId") behandlingskjedeId: String
@@ -63,7 +87,18 @@ class HenvendelseInformasjonController : HenvendelseApi {
     }
 
     @GetMapping("/henthenvendelseliste")
+    @ApiOperation(
+        value = "Hent brukers henvendelse",
+        notes = """
+            Henter ut alle henvendelser av en gitt henvendelseType tilknyttet bruker (fnr).
+        """
+    )
     @ApiImplicitParam(name = "X-Correlation-Id", paramType = "header", required = true)
+    @ApiResponses(value = [
+        ApiResponse(code = 200, message = "Henvendelsene"),
+        ApiResponse(code = 401, message = "Ugyldig token"),
+        ApiResponse(code = 406, message = "Validering av dataene i requesten feilet, se feilmelding i responsen."),
+    ])
     override fun hentHenvendelseListe(
         @ApiParam(example = "12345678910")
         @RequestParam("fodselsnummer") fodselsnummer: String,
