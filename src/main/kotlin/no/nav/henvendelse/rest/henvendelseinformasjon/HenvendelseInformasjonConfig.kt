@@ -3,6 +3,8 @@ package no.nav.henvendelse.rest.henvendelseinformasjon
 import no.nav.common.cxf.StsConfig
 import no.nav.common.utils.EnvironmentUtils
 import no.nav.henvendelse.utils.CXFClient
+import no.nav.henvendelse.utils.Pingable
+import no.nav.henvendelse.utils.createPingable
 import no.nav.melding.domene.brukerdialog.behandlingsinformasjon.v1.XMLHenvendelse
 import no.nav.melding.domene.brukerdialog.behandlingsinformasjon.v1.XMLMeldingFraBruker
 import no.nav.melding.domene.brukerdialog.behandlingsinformasjon.v1.XMLMeldingTilBruker
@@ -20,6 +22,24 @@ class HenvendelseInformasjonConfig {
 
     @Bean
     fun henvendelstPorttype(): HenvendelsePortType =
+        createHenvendelsePorttype()
+            .configureStsForSubject(stsConfig)
+            .build()
+
+    @Bean
+    fun henvendelstPorttypePing(): Pingable {
+        val porttype = createHenvendelsePorttype()
+            .configureStsForSystemUser(stsConfig)
+            .build()
+
+        return createPingable(
+            description = "HenvendelsePortType",
+            critical = true,
+            test = { porttype.ping() }
+        )
+    }
+
+    private fun createHenvendelsePorttype() =
         CXFClient<HenvendelsePortType>()
             // TODO Trenger vi denne?
             // .wsdl("classpath:wsdl/Henvendelse.wsdl")
@@ -34,6 +54,4 @@ class HenvendelseInformasjonConfig {
                     XMLMeldingTilBruker::class.java
                 )
             )
-            .configureStsForSubject(stsConfig)
-            .build()
 }
