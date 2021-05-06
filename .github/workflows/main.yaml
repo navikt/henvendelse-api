@@ -57,8 +57,8 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           PRINT_PAYLOAD: true
           CLUSTER: dev-fss
-          RESOURCE: .nais/nais-${{ matrix.namespace }}.yaml
-          VAR: version=${{ github.sha }}
+          RESOURCE: .nais/preprod.yaml
+          VAR: namespace=${{ matrix.namespace }},version=${{ github.sha }}
 
   deploy-prod:
     name: Deploy to prod
@@ -72,5 +72,5 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           PRINT_PAYLOAD: true
           CLUSTER: prod-fss
-          RESOURCE: .nais/nais.yaml
+          RESOURCE: .nais/prod.yaml
           VAR: version=${{ github.sha }}
