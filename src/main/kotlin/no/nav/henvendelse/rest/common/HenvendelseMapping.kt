@@ -2,9 +2,13 @@ package no.nav.henvendelse.rest.common
 
 import no.nav.melding.domene.brukerdialog.behandlingsinformasjon.v1.XMLHenvendelse
 
-fun Henvendelse.toWS(): XMLHenvendelse {
-    TODO()
-}
 fun XMLHenvendelse.fromWS(): Henvendelse {
-    TODO()
+    return Henvendelse(
+        behandlingsId = this.behandlingsId,
+        behandlingskjedeId = this.behandlingskjedeId,
+        fnr = this.fnr,
+        aktorId = this.aktorId,
+        tema = this.tema,
+        henvendelseType = HenvendelseType.valueOf(this.henvendelseType)
+    )
 }

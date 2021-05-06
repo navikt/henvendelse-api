@@ -65,44 +65,44 @@ enum class HenvendelseType {
 )
 class Henvendelse(
     @ApiModelProperty(example = "1001ABBA")
-    val behandlingsId: String?,
+    val behandlingsId: String? = null,
     @ApiModelProperty(example = "1001ABBA")
-    val behandlingskjedeId: String?,
+    val behandlingskjedeId: String? = null,
     @ApiModelProperty(example = "BD10")
-    val applikasjonsId: String?,
+    val applikasjonsId: String? = null,
     @ApiModelProperty(example = "12345678910")
-    val fnr: String?,
+    val fnr: String? = null,
     @ApiModelProperty(example = "1234567891056")
-    val aktorId: String?,
+    val aktorId: String? = null,
     @ApiModelProperty(example = "KNA")
-    val tema: String?,
-    val behandlingstema: String?,
-    val ferdigstiltUtenSvar: Boolean?,
-    val henvendelseType: HenvendelseType?,
+    val tema: String? = null,
+    val behandlingstema: String? = null,
+    val ferdigstiltUtenSvar: Boolean? = null,
+    val henvendelseType: HenvendelseType? = null,
     @ApiModelProperty(value = "NavIdent", example = "Z999999")
-    val eksternAktor: String?,
+    val eksternAktor: String? = null,
     @ApiModelProperty(example = "2810")
-    val tilknyttetEnhet: String?,
-    val opprettetDato: LocalDateTime?,
-    val avsluttetDato: LocalDateTime?,
-    val lestDato: LocalDateTime?,
+    val tilknyttetEnhet: String? = null,
+    val opprettetDato: LocalDateTime? = null,
+    val avsluttetDato: LocalDateTime? = null,
+    val lestDato: LocalDateTime? = null,
     @ApiModelProperty(example = "2810")
-    val kontorsperreEnhet: String?,
+    val kontorsperreEnhet: String? = null,
     @ApiModelProperty(example = "500101")
-    val brukersEnhet: String?,
+    val brukersEnhet: String? = null,
     @ApiModelProperty(value = "Nav-Ident", example = "Z99999")
-    val markertSomFeilsendtAv: String?,
+    val markertSomFeilsendtAv: String? = null,
     @ApiModelProperty(example = "123456789")
-    val oppgaveIdGsak: String?,
+    val oppgaveIdGsak: String? = null,
     @ApiModelProperty(example = "123456789")
-    val henvendelseIdGsak: String?,
-    val erTilknyttetAnsatt: Boolean?,
-    val gjeldendeTemagruppe: Temagruppe?,
-    val journalfortInformasjon: JournalfortInformasjon?,
-    val markeringer: Markeringer?,
+    val henvendelseIdGsak: String? = null,
+    val erTilknyttetAnsatt: Boolean? = null,
+    val gjeldendeTemagruppe: Temagruppe? = null,
+    val journalfortInformasjon: JournalfortInformasjon? = null,
+    val markeringer: Markeringer? = null,
     @ApiModelProperty(example = "abcd-defg-1234-abba")
-    val korrelasjonsId: String?,
-    val metadataListe: MetadataListe?
+    val korrelasjonsId: String? = null,
+    val metadataListe: MetadataListe? = null
 )
 
 class JournalfortInformasjon(
