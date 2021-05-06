@@ -20,7 +20,6 @@ class FilterConfig {
     private val modiaClientId = EnvironmentUtils.getRequiredProperty("MODIA_CLIENT_ID")
     private val salesforceClientId = EnvironmentUtils.getRequiredProperty("SALESFORCE_CLIENT_ID")
 
-
     @Bean
     fun logFilter() = FilterRegistrationBean<LogFilter>()
         .apply {

@@ -34,11 +34,13 @@ class HenvendelseInformasjonController : HenvendelseApi {
         """
     )
     @ApiImplicitParam(name = "X-Correlation-Id", paramType = "header", required = true)
-    @ApiResponses(value = [
-        ApiResponse(code = 200, message = "Henvendelse"),
-        ApiResponse(code = 401, message = "Ugyldig token"),
-        ApiResponse(code = 406, message = "Validering av dataene i requesten feilet, se feilmelding i responsen."),
-    ])
+    @ApiResponses(
+        value = [
+            ApiResponse(code = 200, message = "Henvendelse"),
+            ApiResponse(code = 401, message = "Ugyldig token"),
+            ApiResponse(code = 406, message = "Validering av dataene i requesten feilet, se feilmelding i responsen."),
+        ]
+    )
     override fun hentHenvendelse(
         @ApiParam(example = "1001ABBA")
         @RequestParam("behandlingsId") behandlingsId: String
@@ -64,11 +66,13 @@ class HenvendelseInformasjonController : HenvendelseApi {
         """
     )
     @ApiImplicitParam(name = "X-Correlation-Id", paramType = "header", required = true)
-    @ApiResponses(value = [
-        ApiResponse(code = 200, message = "Henvendelsene"),
-        ApiResponse(code = 401, message = "Ugyldig token"),
-        ApiResponse(code = 406, message = "Validering av dataene i requesten feilet, se feilmelding i responsen."),
-    ])
+    @ApiResponses(
+        value = [
+            ApiResponse(code = 200, message = "Henvendelsene"),
+            ApiResponse(code = 401, message = "Ugyldig token"),
+            ApiResponse(code = 406, message = "Validering av dataene i requesten feilet, se feilmelding i responsen."),
+        ]
+    )
     override fun hentBehandlingskjede(
         @ApiParam(example = "1001ABBA")
         @RequestParam("behandlingskjedeId") behandlingskjedeId: String
@@ -94,11 +98,13 @@ class HenvendelseInformasjonController : HenvendelseApi {
         """
     )
     @ApiImplicitParam(name = "X-Correlation-Id", paramType = "header", required = true)
-    @ApiResponses(value = [
-        ApiResponse(code = 200, message = "Henvendelsene"),
-        ApiResponse(code = 401, message = "Ugyldig token"),
-        ApiResponse(code = 406, message = "Validering av dataene i requesten feilet, se feilmelding i responsen."),
-    ])
+    @ApiResponses(
+        value = [
+            ApiResponse(code = 200, message = "Henvendelsene"),
+            ApiResponse(code = 401, message = "Ugyldig token"),
+            ApiResponse(code = 406, message = "Validering av dataene i requesten feilet, se feilmelding i responsen."),
+        ]
+    )
     override fun hentHenvendelseListe(
         @ApiParam(example = "12345678910")
         @RequestParam("fodselsnummer") fodselsnummer: String,

@@ -36,11 +36,13 @@ class SendSamtalereferatController {
         """
     )
     @ApiImplicitParam(name = "X-Correlation-Id", paramType = "header", required = true)
-    @ApiResponses(value = [
-        ApiResponse(code = 200, message = "Returner behandlingsIden for det opprettede samtalereferatet"),
-        ApiResponse(code = 401, message = "Ugyldig token"),
-        ApiResponse(code = 406, message = "Validering av dataene i requesten feilet, se feilmelding i responsen."),
-    ])
+    @ApiResponses(
+        value = [
+            ApiResponse(code = 200, message = "Returner behandlingsIden for det opprettede samtalereferatet"),
+            ApiResponse(code = 401, message = "Ugyldig token"),
+            ApiResponse(code = 406, message = "Validering av dataene i requesten feilet, se feilmelding i responsen."),
+        ]
+    )
     fun sendSamtaleReferat(@RequestBody request: SendSamtalereferatRequest): String {
         return withAudit(describe(CREATE, Samtalereferat, FNR to request.fnr, ENHET to request.enhet)) {
             val navIdent = requireOptional(authcontext.navIdent)
