@@ -47,23 +47,25 @@ spec:
   env:
     - name: APP_ENVIRONMENT_NAME
       value: "{{ namespace }}"
+    - name: APP_VERSION
+      value: "{{ version }}"
     - name: SECURITY_TOKEN_SERVICE_DISCOVERY_URL
       value: "https://security-token-service.nais.preprod.local/rest/v1/sts/.well-known/openid-configuration"
     - name: SECURITYTOKENSERVICE_URL
       value: "https://sts-{{ namespace }}.preprod.local/SecurityTokenServiceProvider/"
     - name: MODIA_CLIENT_ID
       value: "modialogin-{{ namespace }}"
+    - name: SALESFORCE_CLIENT_ID
+      value: "a88ad417-dadc-407e-9445-2bdadee125d0"
     - name: ISSO_DISCOVERY_URL
       value: "https://isso-q.adeo.no/isso/oauth2/.well-known/openid-configuration"
+    - name: AAD_V2_DISCOVERURI
+      value: "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/v2.0/.well-known/openid-configuration"
+    - name: CXF_SECURE_LOG
+      value: "enabled"
     - name: DOMENE_BRUKERDIALOG_BEHANDLEHENVENDELSE_V1_ENDPOINTURL
       value: "https://modapp-{{ namespace }}.adeo.no/henvendelse/services/domene.Brukerdialog/BehandleHenvendelse_v1"
     - name: DOMENE_BRUKERDIALOG_HENVENDELSE_V2_ENDPOINTURL
       value: "https://modapp-{{ namespace }}.adeo.no/henvendelse/services/domene.Brukerdialog/Henvendelse_v2"
     - name: DOMENE_BRUKERDIALOG_SENDUTHENVENDELSE_V1_ENDPOINTURL
       value: "https://modapp-{{ namespace }}.adeo.no/henvendelse/services/domene.Brukerdialog/SendUtHenvendelse_v1"
-    - name: SYSTEMUSER_USERNAME
-      value: "dummy"
-    - name: SYSTEMUSER_PASSWORD
-      value: "dummy"
-    - name: CXF_SECURE_LOG
-      value: "enabled"

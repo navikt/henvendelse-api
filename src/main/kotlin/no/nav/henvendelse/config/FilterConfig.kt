@@ -16,7 +16,10 @@ import org.springframework.context.annotation.Profile
 @Profile("!local")
 class FilterConfig {
     private val issoDiscoveryUrl = EnvironmentUtils.getRequiredProperty("ISSO_DISCOVERY_URL")
+    private val azureADV2DiscoveryUrl = EnvironmentUtils.getRequiredProperty("AAD_V2_DISCOVERURI")
     private val modiaClientId = EnvironmentUtils.getRequiredProperty("MODIA_CLIENT_ID")
+    private val salesforceClientId = EnvironmentUtils.getRequiredProperty("SALESFORCE_CLIENT_ID")
+
 
     @Bean
     fun logFilter() = FilterRegistrationBean<LogFilter>()
@@ -30,13 +33,15 @@ class FilterConfig {
     fun userTokenFilter() = FilterRegistrationBean<OidcAuthenticationFilter>()
         .apply {
             filter = OidcAuthenticationFilter(
-                listOf(
-                    OidcAuthenticator.fromConfig(
-                        OidcAuthenticatorConfig()
-                            .withClientIds(listOf(modiaClientId))
-                            .withDiscoveryUrl(issoDiscoveryUrl)
-                            .withUserRole(UserRole.INTERN)
-                    )
+                OidcAuthenticator.fromConfigs(
+                    OidcAuthenticatorConfig()
+                        .withClientIds(listOf(salesforceClientId))
+                        .withDiscoveryUrl(azureADV2DiscoveryUrl)
+                        .withUserRole(UserRole.INTERN),
+                    OidcAuthenticatorConfig()
+                        .withClientIds(listOf(modiaClientId))
+                        .withDiscoveryUrl(issoDiscoveryUrl)
+                        .withUserRole(UserRole.INTERN)
                 )
             )
             order = 3
