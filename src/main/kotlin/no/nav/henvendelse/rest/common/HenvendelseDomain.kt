@@ -2,7 +2,7 @@ package no.nav.henvendelse.rest.common
 
 import io.swagger.annotations.ApiModel
 import io.swagger.annotations.ApiModelProperty
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 @ApiModel(description = "Temagrupper som verdikjeden har kjennskap til")
 enum class Temagruppe {
@@ -83,9 +83,9 @@ class Henvendelse(
     val eksternAktor: String?,
     @ApiModelProperty(example = "2810")
     val tilknyttetEnhet: String?,
-    val opprettetDato: LocalDateTime?,
-    val avsluttetDato: LocalDateTime?,
-    val lestDato: LocalDateTime?,
+    val opprettetDato: ZonedDateTime?,
+    val avsluttetDato: ZonedDateTime?,
+    val lestDato: ZonedDateTime?,
     @ApiModelProperty(example = "2810")
     val kontorsperreEnhet: String?,
     @ApiModelProperty(example = "500101")
@@ -110,7 +110,7 @@ class JournalfortInformasjon(
     val journalpostId: String?,
     @ApiModelProperty(example = "DAG")
     val journalfortTema: String?,
-    val journalfortDato: LocalDateTime?,
+    val journalfortDato: ZonedDateTime?,
     @ApiModelProperty(example = "123456789")
     val journalfortSaksId: String?,
     @ApiModelProperty(example = "Z999999")
@@ -125,12 +125,12 @@ class Markeringer(
     val ferdigstiltUtenSvar: Markering?
 )
 open class Markering(
-    val dato: LocalDateTime?,
+    val dato: ZonedDateTime?,
     @ApiModelProperty(example = "Z999999")
     val aktor: String?
 )
 class Kontorsperre(
-    dato: LocalDateTime?,
+    dato: ZonedDateTime?,
     aktor: String?,
     @ApiModelProperty(example = "2890")
     val enhet: String?
@@ -182,6 +182,6 @@ class DokumentVarsel(
     val journalpostId: String?,
     val dokumenttittel: String?,
     val dokumentIdListe: List<String>?,
-    val ferdigstiltDato: LocalDateTime?,
+    val ferdigstiltDato: ZonedDateTime?,
     val temanavn: String?
 ) : HenvendelseVarsel(stoppRepeterendeVarsel)

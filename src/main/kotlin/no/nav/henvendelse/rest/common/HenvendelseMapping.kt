@@ -3,7 +3,8 @@ package no.nav.henvendelse.rest.common
 import no.nav.melding.domene.brukerdialog.behandlingsinformasjon.v1.*
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
-import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 private val log = LoggerFactory.getLogger("HenvendelseMapping")
 fun XMLHenvendelse.fromWS(): Henvendelse {
@@ -38,7 +39,9 @@ fun XMLHenvendelse.fromWS(): Henvendelse {
 
 private fun XMLMetadataListe?.fromWS() = nullable {
     MetadataListe(
-        this.metadata.mapNotNull { it.fromWS() }
+        this.metadata
+            .filterNotNull()
+            .mapNotNull { it.fromWS() }
     )
 }
 
@@ -117,14 +120,16 @@ private fun XMLMarkering?.fromWS() = nullable {
     )
 }
 
-private fun DateTime?.toJavaTime() = nullable {
-    LocalDateTime.of(
+fun DateTime?.toJavaTime() = nullable {
+    ZonedDateTime.of(
         this.year,
         this.monthOfYear,
         this.dayOfMonth,
         this.hourOfDay,
         this.minuteOfHour,
-        this.secondOfMinute
+        this.secondOfMinute,
+        this.millisOfSecond * 1_000_000,
+        ZoneId.of(this.zone.id, ZoneId.SHORT_IDS)
     )
 }
 
