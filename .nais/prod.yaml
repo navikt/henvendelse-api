@@ -68,12 +68,8 @@ spec:
       value: "https://sts.adeo.no/SecurityTokenServiceProvider/"
     - name: MODIA_CLIENT_ID
       value: "modialogin-p"
-    - name: SALESFORCE_CLIENT_ID
-      value: "TODO TRENGER PROD VERSJON"
     - name: ISSO_DISCOVERY_URL
       value: "https://isso.adeo.no/isso/oauth2/.well-known/openid-configuration"
-    - name: AAD_V2_DISCOVERURI
-      value: "https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/v2.0/.well-known/openid-configuration"
     - name: CXF_SECURE_LOG
       value: "enabled"
     - name: DOMENE_BRUKERDIALOG_BEHANDLEHENVENDELSE_V1_ENDPOINTURL

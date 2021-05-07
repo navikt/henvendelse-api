@@ -15,10 +15,17 @@ import org.springframework.context.annotation.Profile
 @Configuration
 @Profile("!local")
 class FilterConfig {
+    /**
+     * Disse verdiene kommer fra nais-yaml, og er bare her for å forenkle testing
+     */
     private val issoDiscoveryUrl = EnvironmentUtils.getRequiredProperty("ISSO_DISCOVERY_URL")
-    private val azureADV2DiscoveryUrl = EnvironmentUtils.getRequiredProperty("AAD_V2_DISCOVERURI")
     private val modiaClientId = EnvironmentUtils.getRequiredProperty("MODIA_CLIENT_ID")
-    private val salesforceClientId = EnvironmentUtils.getRequiredProperty("SALESFORCE_CLIENT_ID")
+
+    /**
+     * Azure verdiene er automatisk injected til poden siden vi har lagt til azure-konfig i nais-yaml
+     */
+    private val azureDiscoveryUrl = EnvironmentUtils.getRequiredProperty("AZURE_APP_WELL_KNOWN_URL")
+    private val azureClientId = EnvironmentUtils.getRequiredProperty("AZURE_APP_CLIENT_ID")
 
     @Bean
     fun logFilter() = FilterRegistrationBean<LogFilter>()
@@ -34,8 +41,8 @@ class FilterConfig {
             filter = OidcAuthenticationFilter(
                 OidcAuthenticator.fromConfigs(
                     OidcAuthenticatorConfig()
-                        .withClientIds(listOf(salesforceClientId))
-                        .withDiscoveryUrl(azureADV2DiscoveryUrl)
+                        .withClientIds(listOf(azureClientId))
+                        .withDiscoveryUrl(azureDiscoveryUrl)
                         .withUserRole(UserRole.INTERN),
                     OidcAuthenticatorConfig()
                         .withClientIds(listOf(modiaClientId))
