@@ -45,7 +45,9 @@ class SendSamtalereferatController {
     )
     fun sendSamtaleReferat(@RequestBody request: SendSamtalereferatRequest): String {
         return withAudit(describe(CREATE, Samtalereferat, FNR to request.fnr, ENHET to request.enhet)) {
-            val navIdent = requireOptional(authcontext.navIdent)
+            val navIdent = requireOptional(authcontext.navIdent) {
+                "Kunne ikke hente ut navIdent fra JWT"
+            }
             verifyFnr(request.fnr)
             verifyEnhet(request.enhet)
 

@@ -5,10 +5,12 @@ import java.util.*
 object Verification {
     fun verifyBehandlingsId(behandlingsId: String) {
         verify(behandlingsId.startsWith("10")) { "BehandlingsId må starte med 10. [$behandlingsId]" }
+        verify(behandlingsId.length == 9) { "BehandlingsId må ha lengde 9. [$behandlingsId]" }
         verify(behandlingsId.isBase36()) { "BehandlingsId må være gyldig base36. [$behandlingsId]" }
     }
     fun verifyBehandlingsKjedeId(behandlingsKjedeId: String) {
         verify(behandlingsKjedeId.startsWith("10")) { "BehandlingsKjedeId må starte med 10. [$behandlingsKjedeId]" }
+        verify(behandlingsKjedeId.length == 9) { "BehandlingsKjedeId må ha lengde 9. [$behandlingsKjedeId]" }
         verify(behandlingsKjedeId.isBase36()) { "BehandlingsKjedeId må være gyldig base36. [$behandlingsKjedeId]" }
     }
 
@@ -38,9 +40,9 @@ object Verification {
         }
     }
 
-    fun <T> requireOptional(optional: Optional<T>): T {
+    fun <T> requireOptional(optional: Optional<T>, lazyMessage: () -> String): T {
         return optional.orElseThrow {
-            RestInvalidDataException("Kunne ikke hente ut navIdent fra JWT")
+            RestInvalidDataException(lazyMessage())
         }
     }
 
