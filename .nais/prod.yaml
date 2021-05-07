@@ -10,6 +10,8 @@ spec:
   image: "{{ image }}"
   port: 8080
   webproxy: true
+  secureLogs:
+    enabled: true
   liveness:
     path: henvendelse-api/internal/isAlive
     initialDelay: 50
@@ -42,8 +44,19 @@ spec:
     paths:
       - kvPath: /serviceuser/data/dev/srvhenvendelseapi
         mountPath: /var/run/secrets/nais.io/service_user
-  secureLogs:
-    enabled: true
+  azure:
+    application:
+      enabled: true
+      tenant: nav.no
+      claims:
+        extra:
+          - "NAVident"
+  accessPolicy:
+    inbound:
+      rules:
+        - application: salesforce
+          namespace: teamcrm
+          cluster: prod-external
   env:
     - name: APP_ENVIRONMENT_NAME
       value: "p"
