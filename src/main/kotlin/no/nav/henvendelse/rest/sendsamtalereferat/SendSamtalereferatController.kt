@@ -41,6 +41,7 @@ class SendSamtalereferatController {
             ApiResponse(code = 200, message = "Returner behandlingsIden for det opprettede samtalereferatet"),
             ApiResponse(code = 401, message = "Ugyldig token"),
             ApiResponse(code = 406, message = "Validering av dataene i requesten feilet, se feilmelding i responsen."),
+            ApiResponse(code = 500, message = "Ukjent feil, sannsynligvis fra henvendelse"),
         ]
     )
     fun sendSamtaleReferat(@RequestBody request: SendSamtalereferatRequest): String {

@@ -43,6 +43,7 @@ class HenvendelseInformasjonController : HenvendelseApi {
             ApiResponse(code = 200, message = "Henvendelse"),
             ApiResponse(code = 401, message = "Ugyldig token"),
             ApiResponse(code = 406, message = "Validering av dataene i requesten feilet, se feilmelding i responsen."),
+            ApiResponse(code = 500, message = "Ukjent feil, sannsynligvis fra henvendelse"),
         ]
     )
     override fun hentHenvendelse(
@@ -76,6 +77,7 @@ class HenvendelseInformasjonController : HenvendelseApi {
             ApiResponse(code = 200, message = "Henvendelsene"),
             ApiResponse(code = 401, message = "Ugyldig token"),
             ApiResponse(code = 406, message = "Validering av dataene i requesten feilet, se feilmelding i responsen."),
+            ApiResponse(code = 500, message = "Ukjent feil, sannsynligvis fra henvendelse"),
         ]
     )
     override fun hentBehandlingskjede(
@@ -109,6 +111,7 @@ class HenvendelseInformasjonController : HenvendelseApi {
             ApiResponse(code = 200, message = "Henvendelsene"),
             ApiResponse(code = 401, message = "Ugyldig token"),
             ApiResponse(code = 406, message = "Validering av dataene i requesten feilet, se feilmelding i responsen."),
+            ApiResponse(code = 500, message = "Ukjent feil, sannsynligvis fra henvendelse"),
         ]
     )
     override fun hentHenvendelseListe(

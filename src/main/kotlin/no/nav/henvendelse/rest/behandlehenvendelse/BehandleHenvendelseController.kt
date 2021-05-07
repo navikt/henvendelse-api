@@ -43,6 +43,7 @@ class BehandleHenvendelseController : BehandleHenvendelseApi {
             ApiResponse(code = 200, message = "Ok"),
             ApiResponse(code = 401, message = "Ugyldig token"),
             ApiResponse(code = 406, message = "Validering av dataene i requesten feilet, se feilmelding i responsen."),
+            ApiResponse(code = 500, message = "Ukjent feil, sannsynligvis fra henvendelse"),
         ]
     )
     override fun ferdigstillUtenSvar(@RequestBody request: FerdigstillRequest) {
@@ -70,6 +71,7 @@ class BehandleHenvendelseController : BehandleHenvendelseApi {
             ApiResponse(code = 200, message = "Ok"),
             ApiResponse(code = 401, message = "Ugyldig token"),
             ApiResponse(code = 406, message = "Validering av dataene i requesten feilet, se feilmelding i responsen."),
+            ApiResponse(code = 500, message = "Ukjent feil, sannsynligvis fra henvendelse"),
         ]
     )
     override fun oppdaterKontorsperre(@RequestBody request: KontorsperreRequest) {
@@ -99,6 +101,7 @@ class BehandleHenvendelseController : BehandleHenvendelseApi {
             ApiResponse(code = 200, message = "Ok"),
             ApiResponse(code = 401, message = "Ugyldig token"),
             ApiResponse(code = 406, message = "Validering av dataene i requesten feilet, se feilmelding i responsen."),
+            ApiResponse(code = 500, message = "Ukjent feil, sannsynligvis fra henvendelse"),
         ]
     )
     override fun oppdaterTilKassering(@RequestBody request: OppdaterKasseringRequest) {
@@ -127,6 +130,7 @@ class BehandleHenvendelseController : BehandleHenvendelseApi {
             ApiResponse(code = 200, message = "Ok"),
             ApiResponse(code = 401, message = "Ugyldig token"),
             ApiResponse(code = 406, message = "Validering av dataene i requesten feilet, se feilmelding i responsen."),
+            ApiResponse(code = 500, message = "Ukjent feil, sannsynligvis fra henvendelse"),
         ]
     )
     override fun oppdaterTemagruppe(@RequestBody request: OppdaterTemagruppeRequest) {
@@ -153,6 +157,7 @@ class BehandleHenvendelseController : BehandleHenvendelseApi {
             ApiResponse(code = 200, message = "Ok"),
             ApiResponse(code = 401, message = "Ugyldig token"),
             ApiResponse(code = 406, message = "Validering av dataene i requesten feilet, se feilmelding i responsen."),
+            ApiResponse(code = 500, message = "Ukjent feil, sannsynligvis fra henvendelse"),
         ]
     )
     override fun knyttBehandlingskjedeTilSak(@RequestBody request: KnyttTilSakRequest) {
