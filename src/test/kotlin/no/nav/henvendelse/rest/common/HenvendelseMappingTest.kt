@@ -7,7 +7,7 @@ import org.joda.time.DateTime
 import org.junit.jupiter.api.Test
 import java.time.ZonedDateTime
 
-internal class HenvendelseMappingKtTest {
+internal class HenvendelseMappingTest {
     @Test
     fun `alle felter skal kunne inneholde null`() {
         val xml = XMLHenvendelse()
