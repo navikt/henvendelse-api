@@ -3,25 +3,38 @@ package no.nav.henvendelse.rest.common
 import java.util.*
 
 object Verification {
-    fun verifyFnr(fnr: String, lazyMessage: () -> Any) {
-        var valid = true
-        valid = valid && fnr.length == 11
-        valid = valid && fnr.isNumerical()
-
-        verify(valid, lazyMessage)
+    fun verifyBehandlingsId(behandlingsId: String) {
+        verify(behandlingsId.startsWith("10")) { "BehandlingsId må starte med 10. [$behandlingsId]" }
+        verify(behandlingsId.isBase36()) { "BehandlingsId må være gyldig base36. [$behandlingsId]" }
+    }
+    fun verifyBehandlingsKjedeId(behandlingsKjedeId: String) {
+        verify(behandlingsKjedeId.startsWith("10")) { "BehandlingsKjedeId må starte med 10. [$behandlingsKjedeId]" }
+        verify(behandlingsKjedeId.isBase36()) { "BehandlingsKjedeId må være gyldig base36. [$behandlingsKjedeId]" }
     }
 
-    fun verifyEnhet(enhet: String, lazyMessage: () -> Any) {
-        var valid = true
-        valid = valid && enhet.length == 4
-        valid = valid && enhet.isNumerical()
-
-        verify(valid, lazyMessage)
+    fun verifySaksId(saksId: String) {
+        verify(saksId.isNotEmpty()) { "SaksId kan ikke være tom streng. [$saksId]" }
+        verify(saksId.isDigits()) { "SaksId skal bare inneholde tall. [$saksId]" }
     }
 
-    fun verify(valid: Boolean, lazyMessage: () -> Any) {
+    fun verifyTemakode(temakode: String) {
+        verify(temakode.isNotEmpty()) { "Temakode kan ikke være tom streng. [$temakode]" }
+        verify(temakode.isUpperCaseLetters()) { "Temakode skal bare inneholde store bokstaver. [$temakode]" }
+    }
+
+    fun verifyFnr(fnr: String) {
+        verify(fnr.length == 11) { "Fødselsnummer må ha lengde 11. [$fnr]" }
+        verify(fnr.isDigits()) { "Fødselsnummer skal bare inneholde tall. [$fnr]" }
+    }
+
+    fun verifyEnhet(enhet: String) {
+        verify(enhet.length == 4) { "EnhetId må ha lengde 4. [$enhet]" }
+        verify(enhet.isDigits()) { "EnhetId skal bare inneholde tall. [$enhet]" }
+    }
+
+    fun verify(valid: Boolean, lazyMessage: () -> String) {
         if (!valid) {
-            throw RestInvalidDataException(lazyMessage().toString())
+            throw RestInvalidDataException(lazyMessage())
         }
     }
 
@@ -31,7 +44,20 @@ object Verification {
         }
     }
 
-    private fun String.isNumerical(): Boolean {
-        return this.toIntOrNull() != null
+    private fun String.isDigits(): Boolean {
+        return this.all { it.isDigit() }
+    }
+
+    private fun String.isUpperCaseLetters(): Boolean {
+        return this.all { it.isLetter() && it.isUpperCase() }
+    }
+
+    private fun String.isBase36(): Boolean {
+        return try {
+            this.toLong(36)
+            true
+        } catch (e: Throwable) {
+            false
+        }
     }
 }

@@ -46,8 +46,8 @@ class SendSamtalereferatController {
     fun sendSamtaleReferat(@RequestBody request: SendSamtalereferatRequest): String {
         return withAudit(describe(CREATE, Samtalereferat, FNR to request.fnr, ENHET to request.enhet)) {
             val navIdent = requireOptional(authcontext.navIdent)
-            verifyFnr(request.fnr) { "Fødselsnummer ikke gyldig: ${request.fnr}" }
-            verifyEnhet(request.enhet) { "EnhetId ikke gyldig: ${request.enhet}" }
+            verifyFnr(request.fnr)
+            verifyEnhet(request.enhet)
 
             porttype.sendUtHenvendelse(request.tilRequest(navIdent)).behandlingsId
         }

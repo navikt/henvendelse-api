@@ -7,6 +7,10 @@ import no.nav.henvendelse.naudit.Audit.Companion.withAudit
 import no.nav.henvendelse.naudit.AuditIdentifier
 import no.nav.henvendelse.naudit.AuditResources.Henvendelse.Companion.Henvendelse
 import no.nav.henvendelse.rest.common.HenvendelseType
+import no.nav.henvendelse.rest.common.Verification.verify
+import no.nav.henvendelse.rest.common.Verification.verifyBehandlingsId
+import no.nav.henvendelse.rest.common.Verification.verifyBehandlingsKjedeId
+import no.nav.henvendelse.rest.common.Verification.verifyFnr
 import no.nav.tjeneste.domene.brukerdialog.henvendelse.v2.henvendelse.HenvendelsePortType
 import no.nav.tjeneste.domene.brukerdialog.henvendelse.v2.meldinger.WSHentBehandlingskjedeRequest
 import no.nav.tjeneste.domene.brukerdialog.henvendelse.v2.meldinger.WSHentHenvendelseListeRequest
@@ -49,6 +53,7 @@ class HenvendelseInformasjonController : HenvendelseApi {
             AuditIdentifier.BEHANDLINGSID to behandlingsId
         )
         return withAudit(describe(Audit.Action.READ, Henvendelse, *identifiers)) {
+            verifyBehandlingsId(behandlingsId)
             porttype
                 .hentHenvendelse(
                     WSHentHenvendelseRequest()
@@ -81,6 +86,7 @@ class HenvendelseInformasjonController : HenvendelseApi {
             AuditIdentifier.BEHANDLINGSKJEDEID to behandlingskjedeId
         )
         return withAudit(describe(Audit.Action.READ, Henvendelse, *identifiers)) {
+            verifyBehandlingsKjedeId(behandlingskjedeId)
             porttype
                 .hentBehandlingskjede(
                     WSHentBehandlingskjedeRequest()
@@ -116,6 +122,9 @@ class HenvendelseInformasjonController : HenvendelseApi {
             AuditIdentifier.HENVENDELSETYPER to typer.joinToString(", "),
         )
         return withAudit(describe(Audit.Action.READ, Henvendelse, *identifiers)) {
+            verifyFnr(fodselsnummer)
+            verify(typer.isNotEmpty()) { "Typer-liste kan ikke være tom" }
+
             porttype.hentHenvendelseListe(
                 WSHentHenvendelseListeRequest()
                     .withFodselsnummer(fodselsnummer)

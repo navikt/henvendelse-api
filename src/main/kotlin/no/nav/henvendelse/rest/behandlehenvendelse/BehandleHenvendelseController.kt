@@ -10,6 +10,11 @@ import no.nav.henvendelse.naudit.AuditResources.Henvendelse.Companion.KnyttTilSa
 import no.nav.henvendelse.naudit.AuditResources.Henvendelse.Companion.OppdaterKontorsperre
 import no.nav.henvendelse.naudit.AuditResources.Henvendelse.Companion.OppdaterTemagruppe
 import no.nav.henvendelse.naudit.AuditResources.Henvendelse.Companion.OppdaterTilKassering
+import no.nav.henvendelse.rest.common.Verification.verifyBehandlingsId
+import no.nav.henvendelse.rest.common.Verification.verifyBehandlingsKjedeId
+import no.nav.henvendelse.rest.common.Verification.verifyEnhet
+import no.nav.henvendelse.rest.common.Verification.verifySaksId
+import no.nav.henvendelse.rest.common.Verification.verifyTemakode
 import no.nav.tjeneste.domene.brukerdialog.henvendelse.v1.behandlehenvendelse.BehandleHenvendelsePortType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.PostMapping
@@ -45,6 +50,8 @@ class BehandleHenvendelseController : BehandleHenvendelseApi {
             BEHANDLINGSKJEDEID to request.behandlingskjedeId
         )
         withAudit(describe(UPDATE, FerdigstillUtenSvar, *identifiers)) {
+            verifyBehandlingsKjedeId(request.behandlingskjedeId)
+            verifyEnhet(request.enhetId)
             porttype.ferdigstillUtenSvar(request.behandlingskjedeId, request.enhetId)
         }
     }
@@ -70,6 +77,10 @@ class BehandleHenvendelseController : BehandleHenvendelseApi {
             BEHANDLINGSIDLISTE to request.behandlingsIdListe.joinToString(", ")
         )
         withAudit(describe(UPDATE, OppdaterKontorsperre, *identifiers)) {
+            request.behandlingsIdListe.forEach { behandlingsId ->
+                verifyBehandlingsId(behandlingsId)
+            }
+            verifyEnhet(request.enhet)
             porttype.oppdaterKontorsperre(request.enhet, request.behandlingsIdListe)
         }
     }
@@ -95,6 +106,9 @@ class BehandleHenvendelseController : BehandleHenvendelseApi {
             BEHANDLINGSIDLISTE to request.behandlingsIdListe.joinToString(", ")
         )
         withAudit(describe(UPDATE, OppdaterTilKassering, *identifiers)) {
+            request.behandlingsIdListe.forEach { behandlingsId ->
+                verifyBehandlingsId(behandlingsId)
+            }
             porttype.oppdaterTilKassering(request.behandlingsIdListe)
         }
     }
@@ -121,6 +135,7 @@ class BehandleHenvendelseController : BehandleHenvendelseApi {
             TEMAGRUPPE to request.temagruppe.name
         )
         withAudit(describe(UPDATE, OppdaterTemagruppe, *identifiers)) {
+            verifyBehandlingsId(request.behandlingsId)
             porttype.oppdaterTemagruppe(request.behandlingsId, request.temagruppe.name)
         }
     }
@@ -147,10 +162,16 @@ class BehandleHenvendelseController : BehandleHenvendelseApi {
             TEMA to request.temakode
         )
         withAudit(describe(UPDATE, KnyttTilSak, *identifiers)) {
+            verifyBehandlingsKjedeId(request.behandlingskjedeId)
+            verifySaksId(request.saksId)
+            verifyTemakode(request.temakode)
+            verifyEnhet(request.journalforendeEnhet)
+
             porttype.knyttBehandlingskjedeTilSak(
                 request.behandlingskjedeId,
                 request.saksId,
-                request.temakode, request.journalforendeEnhet
+                request.temakode,
+                request.journalforendeEnhet
             )
         }
     }
