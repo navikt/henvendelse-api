@@ -65,7 +65,7 @@ spec:
     - name: SECURITY_TOKEN_SERVICE_DISCOVERY_URL
       value: "https://security-token-service.nais.preprod.local/rest/v1/sts/.well-known/openid-configuration"
     - name: SECURITYTOKENSERVICE_URL
-      value: "https://sts-q1.preprod.local/SecurityTokenServiceProvider/"
+      value: "https://security-token-service.nais.preprod.local/rest/v1/sts/ws/samltoken"
     - name: MODIA_CLIENT_ID
       value: "modialogin-q1"
     - name: ISSO_DISCOVERY_URL
