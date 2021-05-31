@@ -42,7 +42,7 @@ spec:
   vault:
     enabled: true
     paths:
-      - kvPath: /serviceuser/data/dev/srvhenvendelseapi
+      - kvPath: /serviceuser/data/prod/srvhenvendelseapi
         mountPath: /var/run/secrets/nais.io/service_user
   azure:
     application:
