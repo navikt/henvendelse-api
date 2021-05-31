@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 
 @WebMvcTest(BehandleHenvendelseController::class)
-internal class BehandleHenvendelseControllerTest {
+internal class BehandleHenvendelseControllerMvcTest {
     @Autowired
     lateinit var mockMvc: MockMvc
 
@@ -27,7 +27,7 @@ internal class BehandleHenvendelseControllerTest {
     lateinit var porttype: BehandleHenvendelsePortType
 
     @Test
-    fun `returnerer 400 om request ikke er i henhold til kontrakten`() {
+    fun `returnerer 400 om request ikke er i henhold til kontrakten (må ha en request body)`() {
         mockMvc
             .post(
                 url = "/api/v1/behandlehenvendelse/ferdigstillutensvar",
@@ -38,7 +38,7 @@ internal class BehandleHenvendelseControllerTest {
     }
 
     @Test
-    fun `returnerer 406 om dataene ikke passerer validering`() {
+    fun `returnerer 406 om dataene ikke passerer validering (enhet har feil format)`() {
         mockMvc
             .post(
                 url = "/api/v1/behandlehenvendelse/ferdigstillutensvar",

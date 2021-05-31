@@ -21,12 +21,10 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1/sendsamtalereferat")
 @Api(description = "APIer for oppretting av samtalereferat")
-class SendSamtalereferatController {
-    @Autowired
-    lateinit var authcontext: AuthContextHolder
-
-    @Autowired
-    lateinit var porttype: SendUtHenvendelsePortType
+class SendSamtalereferatController(
+    @Autowired val authcontext: AuthContextHolder,
+    @Autowired val porttype: SendUtHenvendelsePortType
+) {
 
     @PostMapping("/send")
     @ApiOperation(

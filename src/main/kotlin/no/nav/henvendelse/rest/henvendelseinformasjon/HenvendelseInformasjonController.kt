@@ -24,9 +24,9 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1/henvendelseinformasjon")
 @Api(description = "APIer for uthenting av henvendelser")
-class HenvendelseInformasjonController : HenvendelseApi {
-    @Autowired
-    lateinit var porttype: HenvendelsePortType
+class HenvendelseInformasjonController(
+    @Autowired val porttype: HenvendelsePortType
+) : HenvendelseApi {
 
     @GetMapping("/henthenvendelse")
     @ApiOperation(

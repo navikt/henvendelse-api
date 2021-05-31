@@ -25,9 +25,9 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1/behandlehenvendelse")
 @Api(description = "APIer for behandling av eksisterende henvendelser")
-class BehandleHenvendelseController : BehandleHenvendelseApi {
-    @Autowired
-    lateinit var porttype: BehandleHenvendelsePortType
+class BehandleHenvendelseController(
+    @Autowired val porttype: BehandleHenvendelsePortType
+) : BehandleHenvendelseApi {
 
     @PostMapping("/ferdigstillutensvar")
     @ApiOperation(
