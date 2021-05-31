@@ -8,18 +8,17 @@ import com.nimbusds.jose.JWSHeader
 import com.nimbusds.jwt.JWT
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.every
 import no.nav.common.auth.context.AuthContext
 import no.nav.common.auth.context.AuthContextHolderThreadLocal
 import no.nav.common.auth.context.UserRole
 import no.nav.tjeneste.domene.brukerdialog.henvendelse.v1.senduthenvendelse.SendUtHenvendelsePortType
 import no.nav.tjeneste.domene.brukerdialog.henvendelse.v1.senduthenvendelse.meldinger.WSSendUtHenvendelseResponse
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.any
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.Bean
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockHttpServletResponse
@@ -40,14 +39,14 @@ internal class SendSamtalereferatControllerMvcTest {
     @Autowired
     lateinit var objectmapper: ObjectMapper
 
-    @MockBean
+    @MockkBean
     lateinit var porttype: SendUtHenvendelsePortType
 
     @Test
     fun `returnerer 400 om request ikke er i henhold til kontrakten (OKSOS er ikke godkjent temagruppe)`() {
-        `when`(porttype.sendUtHenvendelse(any())).thenReturn(
-            WSSendUtHenvendelseResponse().withBehandlingsId("1001ABBA")
-        )
+        every { porttype.sendUtHenvendelse(any()) } returns WSSendUtHenvendelseResponse()
+            .withBehandlingsId("1001ABBA")
+
         withAuthContext("Z999999") {
             mockMvc
                 .post(
@@ -91,9 +90,9 @@ internal class SendSamtalereferatControllerMvcTest {
 
     @Test
     fun `returnerer 200 om kall til henvendelse er ok`() {
-        `when`(porttype.sendUtHenvendelse(any())).thenReturn(
-            WSSendUtHenvendelseResponse().withBehandlingsId("1001ABBA")
-        )
+        every { porttype.sendUtHenvendelse(any()) } returns WSSendUtHenvendelseResponse()
+            .withBehandlingsId("1001ABBA")
+
         withAuthContext("Z999999") {
             mockMvc
                 .post(
@@ -114,7 +113,8 @@ internal class SendSamtalereferatControllerMvcTest {
 
     @Test
     fun `feil fra henvendelse bobler opp til spring-web`() {
-        `when`(porttype.sendUtHenvendelse(any())).thenThrow(IllegalStateException("Noe gikk feil"))
+        every { porttype.sendUtHenvendelse(any()) } throws IllegalStateException("Noe gikk feil")
+
         withAuthContext("Z999999") {
             assertThat {
                 mockMvc

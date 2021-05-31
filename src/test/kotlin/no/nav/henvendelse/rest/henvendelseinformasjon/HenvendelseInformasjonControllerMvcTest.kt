@@ -2,14 +2,14 @@ package no.nav.henvendelse.rest.henvendelseinformasjon
 
 import assertk.assertThat
 import assertk.assertions.*
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.every
 import no.nav.melding.domene.brukerdialog.behandlingsinformasjon.v1.XMLHenvendelse
 import no.nav.tjeneste.domene.brukerdialog.henvendelse.v2.henvendelse.HenvendelsePortType
 import no.nav.tjeneste.domene.brukerdialog.henvendelse.v2.meldinger.WSHentHenvendelseResponse
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.web.servlet.MockMvc
@@ -20,7 +20,7 @@ internal class HenvendelseInformasjonControllerMvcTest {
     @Autowired
     lateinit var mockMvc: MockMvc
 
-    @MockBean
+    @MockkBean
     lateinit var porttype: HenvendelsePortType
 
     @Test
@@ -50,11 +50,9 @@ internal class HenvendelseInformasjonControllerMvcTest {
 
     @Test
     fun `returnerer 200 om kall til henvendelse er ok`() {
-        Mockito.`when`(porttype.hentHenvendelse(Mockito.any())).thenReturn(
-            WSHentHenvendelseResponse().withAny(
-                XMLHenvendelse()
-            )
-        )
+        every { porttype.hentHenvendelse(any()) } returns WSHentHenvendelseResponse()
+            .withAny(XMLHenvendelse())
+
         mockMvc
             .get(
                 url = "/api/v1/henvendelseinformasjon/henthenvendelse?behandlingsId=10001ABBA",
@@ -66,7 +64,7 @@ internal class HenvendelseInformasjonControllerMvcTest {
 
     @Test
     fun `feil fra henvendelse bobler opp til spring-web`() {
-        Mockito.`when`(porttype.hentHenvendelse(Mockito.any())).thenThrow(IllegalStateException("Noe gikk feil"))
+        every { porttype.hentHenvendelse(any()) } throws IllegalStateException("Noe gikk feil")
         assertThat {
             mockMvc
                 .get(

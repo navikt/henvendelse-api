@@ -3,13 +3,12 @@ package no.nav.henvendelse.rest.behandlehenvendelse
 import assertk.assertThat
 import assertk.assertions.*
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.every
 import no.nav.tjeneste.domene.brukerdialog.henvendelse.v1.behandlehenvendelse.BehandleHenvendelsePortType
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.anyString
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.web.servlet.MockMvc
@@ -23,7 +22,7 @@ internal class BehandleHenvendelseControllerMvcTest {
     @Autowired
     lateinit var objectmapper: ObjectMapper
 
-    @MockBean
+    @MockkBean
     lateinit var porttype: BehandleHenvendelsePortType
 
     @Test
@@ -57,6 +56,7 @@ internal class BehandleHenvendelseControllerMvcTest {
 
     @Test
     fun `returnerer 200 om kall til henvendelse er ok`() {
+        every { porttype.ferdigstillUtenSvar(any(), any()) } returns Unit
         mockMvc
             .post(
                 url = "/api/v1/behandlehenvendelse/ferdigstillutensvar",
@@ -72,7 +72,7 @@ internal class BehandleHenvendelseControllerMvcTest {
 
     @Test
     fun `feil fra henvendelse bobler opp til spring-web`() {
-        `when`(porttype.ferdigstillUtenSvar(anyString(), anyString())).thenThrow(IllegalStateException("Noe gikk feil"))
+        every { porttype.ferdigstillUtenSvar(any(), any()) } throws IllegalStateException("Noe gikk feil")
         assertThat {
             mockMvc
                 .post(
