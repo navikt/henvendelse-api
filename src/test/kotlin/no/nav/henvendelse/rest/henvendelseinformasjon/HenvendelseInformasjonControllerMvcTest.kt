@@ -73,7 +73,6 @@ internal class HenvendelseInformasjonControllerMvcTest {
         }
             .isFailure()
             .hasCause(IllegalStateException("Noe gikk feil"))
-
     }
 
     private fun MockMvc.get(url: String, assertions: (MockHttpServletResponse.() -> Unit)? = null) {
