@@ -80,14 +80,14 @@ class FilterConfig {
         }
 
     fun createOidcPingable(name: String, clientId: String, discoveryUrl: String): Pingable {
-        val config = runCatching {
-            val client = OidcDiscoveryConfigurationClient()
-            client.fetchDiscoveryConfiguration(discoveryUrl)
-        }
+        val client = OidcDiscoveryConfigurationClient()
+
         return createPingable(
             description = "$name - $clientId",
             critical = false,
-            test = { config.isSuccess }
+            test = {
+                client.fetchDiscoveryConfiguration(discoveryUrl)
+            }
         )
     }
 }
