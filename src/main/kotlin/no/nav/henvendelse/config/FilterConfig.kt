@@ -5,9 +5,9 @@ import no.nav.common.auth.oidc.discovery.OidcDiscoveryConfigurationClient
 import no.nav.common.auth.oidc.filter.OidcAuthenticationFilter
 import no.nav.common.auth.oidc.filter.OidcAuthenticator
 import no.nav.common.auth.oidc.filter.OidcAuthenticatorConfig
-import no.nav.common.log.LogFilter
 import no.nav.common.rest.filter.SetStandardHttpHeadersFilter
 import no.nav.common.utils.EnvironmentUtils
+import no.nav.henvendelse.utils.DebugLogFilter
 import no.nav.henvendelse.utils.Pingable
 import no.nav.henvendelse.utils.createPingable
 import org.springframework.boot.web.servlet.FilterRegistrationBean
@@ -31,9 +31,9 @@ class FilterConfig {
     private val azureClientId = EnvironmentUtils.getRequiredProperty("AZURE_APP_CLIENT_ID")
 
     @Bean
-    fun logFilter() = FilterRegistrationBean<LogFilter>()
+    fun logFilter() = FilterRegistrationBean<DebugLogFilter>()
         .apply {
-            filter = LogFilter("henvendelse-api", EnvironmentUtils.isDevelopment().orElse(false))
+            filter = DebugLogFilter("henvendelse-api", EnvironmentUtils.isDevelopment().orElse(false))
             order = 1
             addUrlPatterns("/*")
         }
