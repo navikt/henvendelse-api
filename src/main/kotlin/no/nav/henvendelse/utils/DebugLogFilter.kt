@@ -61,8 +61,8 @@ class DebugLogFilter(val applicationName: String, val exposeErrorDetails: Boolea
                     .field("path", request.requestURI)
                     .apply {
                         if (exposeErrorDetails) {
-                            field("headers", request.headerNames.toList().joinToString { "$it=${request.getHeader(it)}" })
-                            field("cookie", request.cookies.joinToString { "${it.name}=${it.value}" })
+                            field("headers", (request.headerNames?.toList() ?: emptyList()).joinToString { "$it=${request.getHeader(it)}" })
+                            field("cookie", (request.cookies ?: emptyArray()).joinToString { "${it.name}=${it.value}" })
                         }
                     }
                     .log(tjenestekallLogg::info)
