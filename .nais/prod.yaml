@@ -28,16 +28,15 @@ spec:
   resources:
     limits:
       cpu: 3000m
-      memory: 1024Mi
+      memory: 1536Mi
     requests:
       cpu: 400m
       memory: 768Mi
   ingresses:
     - https://app.adeo.no/henvendelse-api
-    - https://app.dev.adeo.no/henvendelse-api
   replicas:
     min: 2
-    max: 4
+    max: 6
     cpuThresholdPercentage: 50
   vault:
     enabled: true
