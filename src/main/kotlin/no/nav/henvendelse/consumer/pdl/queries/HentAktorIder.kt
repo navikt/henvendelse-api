@@ -10,7 +10,7 @@ class HentAktorIder(override val variables: Variables) :
     override val query: String = PdlService.lastQueryFraFil("hentAktorIder")
     override val expectedReturnType: Class<Result> = Result::class.java
 
-    data class Variables(val fnr: String) : GraphQLVariables
+    data class Variables(val ident: String) : GraphQLVariables
     data class Result(val hentIdenter: Identliste?) : GraphQLResult
     data class Identliste(val identer: List<IdentInformasjon>)
     data class IdentInformasjon(val ident: String, val historisk: Boolean)

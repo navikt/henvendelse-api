@@ -48,7 +48,7 @@ open class PdlService(
                     ?.map { it.ident }
             }
             .getOrThrow {
-                PdlException("Feil ved uthenting av GT", it)
+                PdlException("Feil ved uthenting av aktorid", it)
             }
     }
 
