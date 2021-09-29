@@ -1,8 +1,9 @@
 package no.nav.henvendelse.consumer.sak
 
+import no.nav.henvendelse.utils.Pingable
 import java.time.OffsetDateTime
 
-interface SakApi {
+interface SakApi : Pingable {
     fun hentSak(saksId: String): SakDto
 }
 

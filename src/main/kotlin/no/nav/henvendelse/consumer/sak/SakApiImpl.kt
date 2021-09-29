@@ -1,6 +1,8 @@
 package no.nav.henvendelse.consumer.sak
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.common.health.HealthCheckResult
+import no.nav.common.health.selftest.SelfTestCheck
 import no.nav.common.rest.client.RestClient
 import no.nav.common.sts.SystemUserTokenProvider
 import no.nav.henvendelse.utils.AuthorizationInterceptor
@@ -34,6 +36,27 @@ class SakApiImpl(
         val request = Request
             .Builder()
             .url("$baseUrl/api/v1/saker/$saksId")
+            .header("accept", "application/json")
+            .build()
+
+        return fetch(request)
+    }
+
+    override fun ping() = SelfTestCheck("Sak via $baseUrl", true) {
+        try {
+            hentPingSaker()
+            HealthCheckResult.healthy()
+        } catch (e: Throwable) {
+            HealthCheckResult.unhealthy(e)
+        }
+    }
+
+    private fun hentPingSaker(): List<SakDto> {
+        val aktorId = "0000000000000"
+        val tema = "PEN"
+        val request = Request
+            .Builder()
+            .url("$baseUrl/api/v1/saker?aktoerId=$aktorId&tema=$tema")
             .header("accept", "application/json")
             .build()
 
