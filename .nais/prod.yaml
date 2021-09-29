@@ -77,3 +77,7 @@ spec:
       value: "https://modapp.adeo.no/henvendelse/services/domene.Brukerdialog/Henvendelse_v2"
     - name: DOMENE_BRUKERDIALOG_SENDUTHENVENDELSE_V1_ENDPOINTURL
       value: "https://modapp.adeo.no/henvendelse/services/domene.Brukerdialog/SendUtHenvendelse_v1"
+    - name: SAK_ENDPOINTURL
+      value: "https://sak.nais.adeo.no"
+    - name: PDL_API_URL
+      value: "https://pdl-api.nais.adeo.no/graphql"
