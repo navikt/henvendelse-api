@@ -42,7 +42,7 @@ class SakApiImpl(
         return fetch(request)
     }
 
-    override fun ping() = SelfTestCheck("Sak via $baseUrl", true) {
+    override fun ping() = SelfTestCheck("Sak via $baseUrl", false) {
         try {
             hentPingSaker()
             HealthCheckResult.healthy()

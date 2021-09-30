@@ -54,7 +54,7 @@ open class PdlService(
             }
     }
 
-    override fun ping() = SelfTestCheck("PDL via $url", true) {
+    override fun ping() = SelfTestCheck("PDL via $url", false) {
         graphqlClient
             .runCatching {
                 execute(
