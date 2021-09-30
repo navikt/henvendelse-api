@@ -81,3 +81,5 @@ spec:
       value: "https://sak.nais.adeo.no"
     - name: PDL_API_URL
       value: "https://pdl-api.nais.adeo.no/graphql"
+    - name: SAF_API_URL
+      value: "https://saf.nais.adeo.no/graphql"

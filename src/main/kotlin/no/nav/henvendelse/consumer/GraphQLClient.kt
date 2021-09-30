@@ -1,4 +1,4 @@
-package no.nav.henvendelse.consumer.pdl
+package no.nav.henvendelse.consumer
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.JavaType
@@ -107,4 +107,12 @@ class GraphQLClient(
             throw exception
         }
     }
+}
+
+inline fun <T> Result<T>.getOrThrow(fn: (Throwable) -> Throwable): T {
+    val exception = exceptionOrNull()
+    if (exception != null) {
+        throw fn(exception)
+    }
+    return getOrThrow()
 }

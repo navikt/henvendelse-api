@@ -82,3 +82,5 @@ spec:
       value: "https://sak.nais.preprod.local"
     - name: PDL_API_URL
       value: "https://pdl-api-q1.dev.intern.nav.no/graphql"
+    - name: SAF_API_URL
+      value: "https://saf-q1.nais.preprod.local/graphql"

@@ -1,4 +1,4 @@
-package no.nav.henvendelse.consumer.pdl
+package no.nav.henvendelse.consumer.saf
 
 import no.nav.common.health.HealthCheckResult
 import no.nav.common.health.selftest.SelfTestCheck
@@ -7,13 +7,13 @@ import no.nav.common.sts.SystemUserTokenProvider
 import no.nav.henvendelse.consumer.GraphQLClient
 import no.nav.henvendelse.consumer.GraphQLClientConfig
 import no.nav.henvendelse.consumer.getOrThrow
-import no.nav.henvendelse.consumer.pdl.queries.HentAktorIder
+import no.nav.henvendelse.consumer.saf.queries.HentBrukersSaker
 import no.nav.henvendelse.utils.Pingable
 import okhttp3.Request
 
-class PdlException(message: String, cause: Throwable) : RuntimeException(message, cause)
+class SafException(message: String, cause: Throwable) : RuntimeException(message, cause)
 
-open class PdlService(
+class SafService(
     private val url: String,
     private val stsService: SystemUserTokenProvider,
 ) : Pingable {
@@ -21,41 +21,47 @@ open class PdlService(
     private val graphqlClient = GraphQLClient(
         httpClient,
         GraphQLClientConfig(
-            tjenesteNavn = "PDL",
+            tjenesteNavn = "SAF",
             requestConfig = { callId ->
                 val appToken: String = stsService.systemUserToken
                     ?: throw IllegalStateException("Kunne ikke hente ut systemusertoken")
 
                 url(url)
                 header("Nav-Call-Id", callId)
-                header("Nav-Consumer-Id", "henvendelse-api")
-                header("Nav-Consumer-Token", "Bearer $appToken")
+                header("X-Correlation-ID", callId)
                 header("Authorization", "Bearer $appToken")
-                header("Tema", "GEN")
+                header("Content-Type", "application/json")
             }
         )
     )
 
-    fun hentAktorIder(fnr: String): List<String>? {
+    fun hentSaker(fnr: String): List<HentBrukersSaker.Sak> {
         return graphqlClient
             .runCatching {
                 execute(
-                    HentAktorIder(HentAktorIder.Variables(fnr))
+                    HentBrukersSaker(
+                        HentBrukersSaker.Variables(
+                            HentBrukersSaker.BrukerIdInput(
+                                id = fnr,
+                                type = HentBrukersSaker.BrukerIdType.FNR
+                            )
+                        )
+                    )
                 )
             }
             .map { response ->
                 response
                     .data
-                    ?.hentIdenter
-                    ?.identer
-                    ?.map { it.ident }
+                    ?.saker
+                    ?.filterNotNull()
+                    ?: emptyList()
             }
             .getOrThrow {
-                PdlException("Feil ved uthenting av aktorid", it)
+                SafException("Feil ved uthenting av saker", it)
             }
     }
 
-    override fun ping() = SelfTestCheck("PDL via $url", true) {
+    override fun ping() = SelfTestCheck("SAF via $url", true) {
         runCatching {
             val ping = Request.Builder()
                 .url(url)
@@ -76,7 +82,7 @@ open class PdlService(
     companion object {
         fun lastQueryFraFil(name: String): String {
             return GraphQLClient::class.java
-                .getResource("/pdl/$name.graphql")
+                .getResource("/saf/$name.graphql")
                 .readText()
                 .replace("[\n\r]", "")
         }

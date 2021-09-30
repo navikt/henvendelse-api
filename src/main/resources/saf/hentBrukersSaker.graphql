@@ -1,0 +1,6 @@
+query($brukerId: BrukerIdInput!) {
+    saker(brukerId: $brukerId) {
+        arkivsaksnummer
+        tema
+    }
+}

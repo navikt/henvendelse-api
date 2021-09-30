@@ -1,8 +1,8 @@
 package no.nav.henvendelse.consumer.pdl.queries
 
-import no.nav.henvendelse.consumer.pdl.GraphQLRequest
-import no.nav.henvendelse.consumer.pdl.GraphQLResult
-import no.nav.henvendelse.consumer.pdl.GraphQLVariables
+import no.nav.henvendelse.consumer.GraphQLRequest
+import no.nav.henvendelse.consumer.GraphQLResult
+import no.nav.henvendelse.consumer.GraphQLVariables
 import no.nav.henvendelse.consumer.pdl.PdlService
 
 class HentAktorIder(override val variables: Variables) :
