@@ -9,7 +9,6 @@ import no.nav.henvendelse.consumer.GraphQLClientConfig
 import no.nav.henvendelse.consumer.getOrThrow
 import no.nav.henvendelse.consumer.pdl.queries.HentAktorIder
 import no.nav.henvendelse.utils.Pingable
-import okhttp3.Request
 
 class PdlException(message: String, cause: Throwable) : RuntimeException(message, cause)
 
@@ -56,19 +55,14 @@ open class PdlService(
     }
 
     override fun ping() = SelfTestCheck("PDL via $url", true) {
-        runCatching {
-            val ping = Request.Builder()
-                .url(url)
-                .build()
-            val response = httpClient.newCall(ping).execute()
-            if (response.code() == 200) {
-                HealthCheckResult.healthy()
-            } else {
-                HealthCheckResult.unhealthy("Feil status kode ${response.code()}")
+        graphqlClient
+            .runCatching {
+                execute(
+                    HentAktorIder(HentAktorIder.Variables("00000000000"))
+                )
             }
-        }
             .fold(
-                onSuccess = { it },
+                onSuccess = { HealthCheckResult.healthy() },
                 onFailure = { HealthCheckResult.unhealthy(it) }
             )
     }

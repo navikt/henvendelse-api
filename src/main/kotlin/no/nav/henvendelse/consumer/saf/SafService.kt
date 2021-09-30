@@ -9,7 +9,6 @@ import no.nav.henvendelse.consumer.GraphQLClientConfig
 import no.nav.henvendelse.consumer.getOrThrow
 import no.nav.henvendelse.consumer.saf.queries.HentBrukersSaker
 import no.nav.henvendelse.utils.Pingable
-import okhttp3.Request
 
 class SafException(message: String, cause: Throwable) : RuntimeException(message, cause)
 
@@ -62,19 +61,21 @@ class SafService(
     }
 
     override fun ping() = SelfTestCheck("SAF via $url", true) {
-        runCatching {
-            val ping = Request.Builder()
-                .url(url)
-                .build()
-            val response = httpClient.newCall(ping).execute()
-            if (response.code() == 200) {
-                HealthCheckResult.healthy()
-            } else {
-                HealthCheckResult.unhealthy("Feil status kode ${response.code()}")
+        graphqlClient
+            .runCatching {
+                execute(
+                    HentBrukersSaker(
+                        HentBrukersSaker.Variables(
+                            HentBrukersSaker.BrukerIdInput(
+                                id = "00000000000",
+                                type = HentBrukersSaker.BrukerIdType.FNR
+                            )
+                        )
+                    )
+                )
             }
-        }
             .fold(
-                onSuccess = { it },
+                onSuccess = { HealthCheckResult.healthy() },
                 onFailure = { HealthCheckResult.unhealthy(it) }
             )
     }
