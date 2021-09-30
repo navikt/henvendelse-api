@@ -1,8 +1,10 @@
 package no.nav.henvendelse.rest.common
 
-import no.nav.henvendelse.consumer.pdl.PdlService
-import no.nav.henvendelse.consumer.sak.SakDto
-import no.nav.henvendelse.rest.henvendelseinformasjon.HentHenvendelseResponse
+import no.nav.henvendelse.consumer.saf.SafService
+import no.nav.henvendelse.rest.behandlehenvendelse.KnyttTilSakRequest
+import no.nav.henvendelse.rest.henvendelseinformasjon.fromWS
+import no.nav.tjeneste.domene.brukerdialog.henvendelse.v2.henvendelse.HenvendelsePortType
+import no.nav.tjeneste.domene.brukerdialog.henvendelse.v2.meldinger.WSHentHenvendelseRequest
 import java.util.*
 
 object Verification {
@@ -47,26 +49,23 @@ object Verification {
         verify(enhet.isDigits()) { "EnhetId skal bare inneholde tall. [$enhet]" }
     }
 
-    fun verifySammeEierskapAvSakOgHenvendelse(pdlService: PdlService, sak: SakDto, henvendelse: HentHenvendelseResponse) {
-        val sakAktorId = verifyNotNull(sak.aktoerId) { "Saksid ${sak.id} hadde ingen aktorId" }
-        val henvendelseAktorId = verifyNotNull(henvendelse.henvendelse.aktorId) {
-            "Henvendelse ${henvendelse.henvendelse.behandlingsId} hadde ingen lagret aktorId"
+    fun verifySammeEierskapAvSakOgHenvendelse(
+        request: KnyttTilSakRequest,
+        saf: SafService,
+        henvendelsePorttype: HenvendelsePortType
+    ) {
+        val henvendelse = henvendelsePorttype.hentHenvendelse(
+            WSHentHenvendelseRequest().withBehandlingsId(request.behandlingskjedeId)
+        ).fromWS()
+        val fnr = verifyNotNull(henvendelse.henvendelse.fnr) {
+            "Henvendelse ${request.behandlingskjedeId} hadde ingen lagret fnr"
         }
-
-        if (sakAktorId == henvendelseAktorId) {
-            return
-        } else {
-            val fnr = henvendelse.henvendelse.fnr
-            val aktorIder = fnr?.let { pdlService.hentAktorIder(it) } ?: emptyList()
-            verify(aktorIder.contains(sakAktorId)) {
-                """
-                    Henvendelse/Sak hadde forskjellige aktorId lagret, og oppslags vha PDL feilet.
-                    Henvendelse-fnr: $fnr
-                    Henvendelse-aktorId: $henvendelseAktorId
-                    SakAktorId: $sakAktorId
-                    PdlAktorId: ${aktorIder.joinToString(", ")}
-                """.trimIndent()
-            }
+        val saker = saf.hentSaker(fnr)
+        verify(saker.any { it.arkivsaksnummer == request.saksId }) {
+            """
+                SAF hadde ikke sak (${request.saksId}) lagret for bruker $fnr.
+                Saker: $saker
+            """.trimIndent()
         }
     }
 
