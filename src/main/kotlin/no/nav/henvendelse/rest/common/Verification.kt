@@ -61,10 +61,18 @@ object Verification {
             "Henvendelse ${request.behandlingskjedeId} hadde ingen lagret fnr"
         }
         val saker = saf.hentSaker(fnr)
-        verify(saker.any { it.arkivsaksnummer == request.saksId }) {
+        val saksReferanse = saker.find { it.arkivsaksnummer == request.saksId }
+        verify(saksReferanse != null) {
             """
                 SAF hadde ikke sak (${request.saksId}) lagret for bruker $fnr.
                 Saker: $saker
+            """.trimIndent()
+        }
+        verify(saksReferanse?.tema?.name == request.temakode) {
+            """
+                Mismatch av temakode mellom SAF og request.
+                SAF: ${saksReferanse?.tema?.name}
+                Req: ${request.temakode}
             """.trimIndent()
         }
     }

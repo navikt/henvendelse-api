@@ -109,7 +109,7 @@ internal class BehandleHenvendelseControllerMvcTest {
     @Test
     fun `journalføring på sak skal fungere om saf returnerer saksID for henvendelsen eier`() {
         every { safService.hentSaker(any()) } returns listOf(
-            HentBrukersSaker.Sak("123465", null)
+            HentBrukersSaker.Sak("123465", HentBrukersSaker.Tema.OPP)
         )
         every { henvendelsePorttype.hentHenvendelse(any()) } returns WSHentHenvendelseResponse()
             .withAny(XMLHenvendelse().withAktorId("00012345678910").withFnr("12345678910"))
