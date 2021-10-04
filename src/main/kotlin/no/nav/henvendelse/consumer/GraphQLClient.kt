@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JavaType
 import no.nav.common.log.MDCConstants
 import no.nav.henvendelse.utils.OkHttpUtils
 import no.nav.henvendelse.utils.TjenestekallLogger
+import no.nav.henvendelse.utils.getCallId
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -41,7 +42,7 @@ class GraphQLClient(
     fun <VARS : GraphQLVariables, DATA : GraphQLResult, REQUEST : GraphQLRequest<VARS, DATA>> execute(
         request: REQUEST
     ): GraphQLResponse<DATA> {
-        val callId = MDC.get(MDCConstants.MDC_CALL_ID) ?: UUID.randomUUID().toString()
+        val callId = getCallId()
         try {
             log.info(
                 """
@@ -76,7 +77,7 @@ class GraphQLClient(
 
             val typeReference: JavaType = OkHttpUtils.objectMapper.typeFactory
                 .constructParametricType(GraphQLResponse::class.java, request.expectedReturnType)
-            val response: GraphQLResponse<DATA> = OkHttpUtils.objectMapper.readValue<GraphQLResponse<DATA>>(body, typeReference)
+            val response: GraphQLResponse<DATA> = OkHttpUtils.objectMapper.readValue(body, typeReference)
 
             if (response.errors?.isNotEmpty() == true) {
                 val errorMessages = response.errors.joinToString(", ") { it.message }
