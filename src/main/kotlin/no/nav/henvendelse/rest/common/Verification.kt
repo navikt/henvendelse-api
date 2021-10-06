@@ -1,8 +1,23 @@
 package no.nav.henvendelse.rest.common
 
+import no.nav.henvendelse.consumer.saf.SafService
+import no.nav.henvendelse.rest.behandlehenvendelse.KnyttTilSakRequest
+import no.nav.henvendelse.rest.henvendelseinformasjon.fromWS
+import no.nav.tjeneste.domene.brukerdialog.henvendelse.v2.henvendelse.HenvendelsePortType
+import no.nav.tjeneste.domene.brukerdialog.henvendelse.v2.meldinger.WSHentHenvendelseRequest
 import java.util.*
 
 object Verification {
+    fun <T> verifyNotNull(value: T?, lazyMessage: () -> String): T {
+        return runCatching {
+            requireNotNull(value)
+        }.fold(
+            onSuccess = { it },
+            onFailure = {
+                throw RestInvalidDataException(lazyMessage())
+            }
+        )
+    }
     fun verifyBehandlingsId(behandlingsId: String) {
         verify(behandlingsId.startsWith("10")) { "BehandlingsId må starte med 10. [$behandlingsId]" }
         verify(behandlingsId.length == 9) { "BehandlingsId må ha lengde 9. [$behandlingsId]" }
@@ -32,6 +47,34 @@ object Verification {
     fun verifyEnhet(enhet: String) {
         verify(enhet.length == 4) { "EnhetId må ha lengde 4. [$enhet]" }
         verify(enhet.isDigits()) { "EnhetId skal bare inneholde tall. [$enhet]" }
+    }
+
+    fun verifySammeEierskapAvSakOgHenvendelse(
+        request: KnyttTilSakRequest,
+        saf: SafService,
+        henvendelsePorttype: HenvendelsePortType
+    ) {
+        val henvendelse = henvendelsePorttype.hentHenvendelse(
+            WSHentHenvendelseRequest().withBehandlingsId(request.behandlingskjedeId)
+        ).fromWS()
+        val fnr = verifyNotNull(henvendelse.henvendelse.fnr) {
+            "Henvendelse ${request.behandlingskjedeId} hadde ingen lagret fnr"
+        }
+        val saker = saf.hentSaker(fnr)
+        val saksReferanse = saker.find { it.arkivsaksnummer == request.saksId }
+        verify(saksReferanse != null) {
+            """
+                SAF hadde ikke sak (${request.saksId}) lagret for bruker $fnr.
+                Saker: $saker
+            """.trimIndent()
+        }
+        verify(saksReferanse?.tema?.name == request.temakode) {
+            """
+                Mismatch av temakode mellom SAF og request.
+                SAF: ${saksReferanse?.tema?.name}
+                Req: ${request.temakode}
+            """.trimIndent()
+        }
     }
 
     fun verify(valid: Boolean, lazyMessage: () -> String) {

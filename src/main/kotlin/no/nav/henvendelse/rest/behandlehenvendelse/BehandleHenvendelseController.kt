@@ -1,6 +1,7 @@
 package no.nav.henvendelse.rest.behandlehenvendelse
 
 import io.swagger.annotations.*
+import no.nav.henvendelse.consumer.saf.SafService
 import no.nav.henvendelse.naudit.Audit.Action.UPDATE
 import no.nav.henvendelse.naudit.Audit.Companion.describe
 import no.nav.henvendelse.naudit.Audit.Companion.withAudit
@@ -14,8 +15,10 @@ import no.nav.henvendelse.rest.common.Verification.verifyBehandlingsId
 import no.nav.henvendelse.rest.common.Verification.verifyBehandlingsKjedeId
 import no.nav.henvendelse.rest.common.Verification.verifyEnhet
 import no.nav.henvendelse.rest.common.Verification.verifySaksId
+import no.nav.henvendelse.rest.common.Verification.verifySammeEierskapAvSakOgHenvendelse
 import no.nav.henvendelse.rest.common.Verification.verifyTemakode
 import no.nav.tjeneste.domene.brukerdialog.henvendelse.v1.behandlehenvendelse.BehandleHenvendelsePortType
+import no.nav.tjeneste.domene.brukerdialog.henvendelse.v2.henvendelse.HenvendelsePortType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -26,7 +29,9 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/behandlehenvendelse")
 @Api(description = "APIer for behandling av eksisterende henvendelser")
 class BehandleHenvendelseController(
-    @Autowired val porttype: BehandleHenvendelsePortType
+    @Autowired val porttype: BehandleHenvendelsePortType,
+    @Autowired val safService: SafService,
+    @Autowired val henvendelsePorttype: HenvendelsePortType
 ) : BehandleHenvendelseApi {
 
     @PostMapping("/ferdigstillutensvar")
@@ -171,6 +176,11 @@ class BehandleHenvendelseController(
             verifySaksId(request.saksId)
             verifyTemakode(request.temakode)
             verifyEnhet(request.journalforendeEnhet)
+            verifySammeEierskapAvSakOgHenvendelse(
+                request = request,
+                saf = safService,
+                henvendelsePorttype = henvendelsePorttype
+            )
 
             porttype.knyttBehandlingskjedeTilSak(
                 request.behandlingskjedeId,

@@ -24,7 +24,7 @@ internal class HenvendelseInformasjonControllerMvcTest {
     lateinit var porttype: HenvendelsePortType
 
     @Test
-    fun `returnerer 400 om request ikke er i henhold til kontrakten (behandlingsId må være en del av requesten)`() {
+    fun `returnerer 400 om request ikke er i henhold til kontrakten (behandlingsId må være med)`() {
         mockMvc
             .get(
                 url = "/api/v1/henvendelseinformasjon/henthenvendelse",
