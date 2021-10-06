@@ -33,10 +33,6 @@ class BehandleHenvendelseController(
     @Autowired val safService: SafService,
     @Autowired val henvendelsePorttype: HenvendelsePortType
 ) : BehandleHenvendelseApi {
-    companion object {
-        var verifiserEierskapAvSakOgHenvendelse = false
-    }
-
     @PostMapping("/ferdigstillutensvar")
     @ApiOperation(
         value = "Marker som ferdigstilt uten svar",
@@ -179,13 +175,11 @@ class BehandleHenvendelseController(
             verifySaksId(request.saksId)
             verifyTemakode(request.temakode)
             verifyEnhet(request.journalforendeEnhet)
-            if (verifiserEierskapAvSakOgHenvendelse) {
-                verifySammeEierskapAvSakOgHenvendelse(
-                    request = request,
-                    saf = safService,
-                    henvendelsePorttype = henvendelsePorttype
-                )
-            }
+            verifySammeEierskapAvSakOgHenvendelse(
+                request = request,
+                saf = safService,
+                henvendelsePorttype = henvendelsePorttype
+            )
 
             porttype.knyttBehandlingskjedeTilSak(
                 request.behandlingskjedeId,

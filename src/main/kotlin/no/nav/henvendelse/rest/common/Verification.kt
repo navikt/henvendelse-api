@@ -5,9 +5,13 @@ import no.nav.henvendelse.rest.behandlehenvendelse.KnyttTilSakRequest
 import no.nav.henvendelse.rest.henvendelseinformasjon.fromWS
 import no.nav.tjeneste.domene.brukerdialog.henvendelse.v2.henvendelse.HenvendelsePortType
 import no.nav.tjeneste.domene.brukerdialog.henvendelse.v2.meldinger.WSHentHenvendelseRequest
+import org.slf4j.LoggerFactory
 import java.util.*
 
 object Verification {
+    var allowSoftVerification = true
+    private val log = LoggerFactory.getLogger(Verification::class.java)
+
     fun <T> verifyNotNull(value: T?, lazyMessage: () -> String): T {
         return runCatching {
             requireNotNull(value)
@@ -54,32 +58,44 @@ object Verification {
         saf: SafService,
         henvendelsePorttype: HenvendelsePortType
     ) {
-        val henvendelse = henvendelsePorttype.hentHenvendelse(
-            WSHentHenvendelseRequest().withBehandlingsId(request.behandlingskjedeId)
-        ).fromWS()
-        val fnr = verifyNotNull(henvendelse.henvendelse.fnr) {
-            "Henvendelse ${request.behandlingskjedeId} hadde ingen lagret fnr"
-        }
-        val saker = saf.hentSaker(fnr)
-        val saksReferanse = saker.find { it.arkivsaksnummer == request.saksId }
-        verify(saksReferanse != null) {
-            """
-                SAF hadde ikke sak (${request.saksId}) lagret for bruker $fnr.
-                Saker: $saker
-            """.trimIndent()
-        }
-        verify(saksReferanse?.tema?.name == request.temakode) {
-            """
-                Mismatch av temakode mellom SAF og request.
-                SAF: ${saksReferanse?.tema?.name}
-                Req: ${request.temakode}
-            """.trimIndent()
+        try {
+            val henvendelse = henvendelsePorttype.hentHenvendelse(
+                WSHentHenvendelseRequest().withBehandlingsId(request.behandlingskjedeId)
+            ).fromWS()
+            val fnr = verifyNotNull(henvendelse.henvendelse.fnr) {
+                "Henvendelse ${request.behandlingskjedeId} hadde ingen lagret fnr"
+            }
+            val saker = saf.hentSaker(fnr)
+            val saksReferanse = saker.find { it.arkivsaksnummer == request.saksId }
+            verify(saksReferanse != null, softVerify = true) {
+                """
+                    SAF hadde ikke sak (${request.saksId}) lagret for bruker $fnr.
+                    Saker: $saker
+                """.trimIndent()
+            }
+            verify(saksReferanse?.tema?.name == request.temakode, softVerify = true) {
+                """
+                    Mismatch av temakode mellom SAF og request.
+                    SAF: ${saksReferanse?.tema?.name}
+                    Req: ${request.temakode}
+                """.trimIndent()
+            }
+        } catch (e: RestInvalidDataException) {
+            throw e
+        } catch (e: Exception) {
+            log.error("Soft-Verification failed verifySammeEierskapAvSakOgHenvendelse", e)
         }
     }
 
-    fun verify(valid: Boolean, lazyMessage: () -> String) {
+    fun verify(valid: Boolean, softVerify: Boolean = false, lazyMessage: () -> String) {
         if (!valid) {
-            throw RestInvalidDataException(lazyMessage())
+            if (allowSoftVerification && softVerify) {
+                log.warn("Soft-Verification failed: ${lazyMessage()}")
+            } else {
+                throw RestInvalidDataException(lazyMessage())
+            }
+        } else {
+            log.info("Soft-Verification success: ${lazyMessage()} ")
         }
     }
 
