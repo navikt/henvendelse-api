@@ -41,6 +41,7 @@ internal class BehandleHenvendelseControllerMvcTest {
 
     @BeforeEach
     fun setup() {
+        BehandleHenvendelseController.verifiserEierskapAvSakOgHenvendelse = true
         every { safService.hentSaker(any()) } returns emptyList()
     }
 

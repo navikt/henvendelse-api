@@ -33,6 +33,9 @@ class BehandleHenvendelseController(
     @Autowired val safService: SafService,
     @Autowired val henvendelsePorttype: HenvendelsePortType
 ) : BehandleHenvendelseApi {
+    companion object {
+        var verifiserEierskapAvSakOgHenvendelse = false
+    }
 
     @PostMapping("/ferdigstillutensvar")
     @ApiOperation(
@@ -176,11 +179,13 @@ class BehandleHenvendelseController(
             verifySaksId(request.saksId)
             verifyTemakode(request.temakode)
             verifyEnhet(request.journalforendeEnhet)
-            verifySammeEierskapAvSakOgHenvendelse(
-                request = request,
-                saf = safService,
-                henvendelsePorttype = henvendelsePorttype
-            )
+            if (verifiserEierskapAvSakOgHenvendelse) {
+                verifySammeEierskapAvSakOgHenvendelse(
+                    request = request,
+                    saf = safService,
+                    henvendelsePorttype = henvendelsePorttype
+                )
+            }
 
             porttype.knyttBehandlingskjedeTilSak(
                 request.behandlingskjedeId,
