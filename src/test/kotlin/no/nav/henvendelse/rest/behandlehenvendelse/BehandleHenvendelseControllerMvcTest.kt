@@ -8,6 +8,7 @@ import io.mockk.every
 import io.mockk.verify
 import no.nav.henvendelse.consumer.saf.SafService
 import no.nav.henvendelse.consumer.saf.queries.HentBrukersSaker
+import no.nav.henvendelse.rest.common.Verification
 import no.nav.melding.domene.brukerdialog.behandlingsinformasjon.v1.XMLHenvendelse
 import no.nav.tjeneste.domene.brukerdialog.henvendelse.v1.behandlehenvendelse.BehandleHenvendelsePortType
 import no.nav.tjeneste.domene.brukerdialog.henvendelse.v2.henvendelse.HenvendelsePortType
@@ -41,7 +42,7 @@ internal class BehandleHenvendelseControllerMvcTest {
 
     @BeforeEach
     fun setup() {
-        BehandleHenvendelseController.verifiserEierskapAvSakOgHenvendelse = true
+        Verification.allowSoftVerification = false
         every { safService.hentSaker(any()) } returns emptyList()
     }
 
