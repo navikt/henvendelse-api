@@ -94,7 +94,7 @@ object Verification {
             } else {
                 throw RestInvalidDataException(lazyMessage())
             }
-        } else {
+        } else if (softVerify) {
             log.info("Soft-Verification success: ${lazyMessage()} ")
         }
     }
