@@ -62,7 +62,7 @@ spec:
     - name: APP_VERSION
       value: "{{ version }}"
     - name: SECURITY_TOKEN_SERVICE_DISCOVERY_URL
-      value: "https://security-token-service.nais.preprod.local/rest/v1/sts/.well-known/openid-configuration"
+      value: "https://security-token-service.nais.adeo.no/rest/v1/sts/.well-known/openid-configuration"
     - name: SECURITYTOKENSERVICE_URL
       value: "https://security-token-service.nais.adeo.no/rest/v1/sts/ws/samltoken"
     - name: MODIA_CLIENT_ID
